@@ -11,6 +11,8 @@ public class EndlessGround : MonoBehaviour
 
     [Header("Scrolling")]
     public float scrollSpeed = 5f;
+    public float speedIncreaseRate = 0.5f;   // How fast world speed increases over time
+    public float maxScrollSpeed = 20f;       // Cap on max speed
 
     [Header("Player")]
     public Transform player;
@@ -28,38 +30,43 @@ public class EndlessGround : MonoBehaviour
     private float startX = -12.2f;
     private float leftBoundary = -30f;
 
-void Start()
-{
-    totalTiles = tilesLeft + tilesRight;
-    groundTiles = new Transform[totalTiles];
-
-    // Spawn ground tiles
-    for (int i = 0; i < totalTiles; i++)
+    void Start()
     {
-        SpawnTile(i, startX + (i - tilesLeft) * tileWidth);
-    }
+        totalTiles = tilesLeft + tilesRight;
+        groundTiles = new Transform[totalTiles];
 
-    // Place player on first tile
-    player.position = new Vector3(startX + tileWidth / 2f, yPos + 1f, 0);
-    // var pc = player.GetComponent<PlayerController>();
-    // if (pc != null) pc.minX = startX;
-
-    // Spawn **only one** killer
-    if (killerPrefab != null)
-    {
-        // Make sure no other killer exists
-        if (GameObject.FindGameObjectWithTag("Killer") == null)
+        // Spawn ground tiles
+        for (int i = 0; i < totalTiles; i++)
         {
-            GameObject killerObj = Instantiate(killerPrefab);
-            // KillerController kc = killerObj.GetComponent<KillerController>();
-            // if (kc != null) kc.player = player;
+            SpawnTile(i, startX + (i - tilesLeft) * tileWidth);
+        }
+
+        // Place player on first tile
+        player.position = new Vector3(startX + tileWidth / 2f, yPos + 1f, 0);
+
+        // Spawn **only one** killer
+        if (killerPrefab != null)
+        {
+            if (GameObject.FindGameObjectWithTag("Killer") == null)
+            {
+                Instantiate(killerPrefab);
+            }
         }
     }
-}
-
 
     void Update()
     {
+        // 🌀 Increase scroll speed over time
+        scrollSpeed = Mathf.Min(scrollSpeed + speedIncreaseRate * Time.deltaTime, maxScrollSpeed);
+
+        // Update player speed to match world speed
+        var pc = player.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.AdjustToWorldSpeed(scrollSpeed);
+        }
+
+        // Move tiles
         for (int i = 0; i < totalTiles; i++)
         {
             Transform tile = groundTiles[i];
@@ -82,22 +89,19 @@ void Start()
     }
 
     void SpawnTile(int index, float xPos)
-{
-    GameObject prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
-    if (prefab == null) return;
-
-    GameObject tile = Instantiate(prefab, new Vector3(xPos, yPos, 0), Quaternion.identity);
-    groundTiles[index] = tile.transform;
-
-    // 30%
-    if (coinPrefab != null && Random.value < 0.3f)
     {
-        Vector3 spawnPos = new Vector3(xPos, yPos + 1.5f, 0);
-        GameObject coin = Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+        GameObject prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
+        if (prefab == null) return;
 
-       
-        coin.transform.SetParent(tile.transform);
+        GameObject tile = Instantiate(prefab, new Vector3(xPos, yPos, 0), Quaternion.identity);
+        groundTiles[index] = tile.transform;
+
+        // 30% chance to spawn coin
+        if (coinPrefab != null && Random.value < 0.3f)
+        {
+            Vector3 spawnPos = new Vector3(xPos, yPos + 1.5f, 0);
+            GameObject coin = Instantiate(coinPrefab, spawnPos, Quaternion.identity);
+            coin.transform.SetParent(tile.transform);
+        }
     }
-}
-
 }

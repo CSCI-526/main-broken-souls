@@ -1583,8 +1583,6 @@ MonoBehaviour:
   tileWidth: 10
   yPos: -4.5
   scrollSpeed: 5
-  speedIncreaseRate: 0.2
-  maxScrollSpeed: 20
   player: {fileID: 1256906662}
   killerPrefab: {fileID: 1574919655}
   coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
@@ -1739,15 +1737,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  jumpForce: 10
+  jumpForce: 13
   minX: -1
   maxX: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
-  baseMoveSpeed: 5
-  baseJumpForce: 9
-  speedScaleFactor: 0.2
   crouchSpeedMultiplier: 0.5
   normalColor: {r: 0.8490566, g: 0.4715066, b: 0.23629406, a: 1}
   flippedColor: {r: 0.7735849, g: 0.14231044, b: 0.7601196, a: 1}
