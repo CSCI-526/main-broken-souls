@@ -16,10 +16,18 @@ public class PlayerController : MonoBehaviour
     [Header("Base Movement Settings")]
     public float baseMoveSpeed = 5f;
     public float baseJumpForce = 7f;
-    public float speedScaleFactor = 0.2f;   // How much player speed scales with world speed
+    public float speedScaleFactor = 0.2f;
 
     [Header("Crouch")]
     public float crouchSpeedMultiplier = 0.5f;
+
+    [Header("Crouch Collider Animation")]
+    public BoxCollider2D playerCollider;   // Assign your BoxCollider2D
+    public Vector2 standSize = new Vector2(0.5f, 1.5f);
+    public Vector2 crouchSize = new Vector2(0.5f, 0.8f);
+    public Vector2 standOffset = new Vector2(0f, 0f);
+    public Vector2 crouchOffset = new Vector2(0f, -0.35f);
+    public float crouchSmoothSpeed = 10f;
 
     [Header("Colors")]
     public Color normalColor = Color.white;
@@ -30,10 +38,10 @@ public class PlayerController : MonoBehaviour
     public float shieldBounceForce = 6f;
 
     [Header("UI")]
-    public HealthBar healthBar;  // Reference to HealthBar
+    public HealthBar healthBar;
 
     [Header("Damage")]
-    public float damageCooldown = 0.5f;   // time between damage instances
+    public float damageCooldown = 0.5f;
     private float lastDamageTime = -999f;
 
     private Rigidbody2D rb;
@@ -42,12 +50,17 @@ public class PlayerController : MonoBehaviour
     private bool isCrouching = false;
     private bool controlsFlipped = false;
 
+    private float groundY = -3.487f; // exact top of ground
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         rb.gravityScale = 3f;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.freezeRotation = true;
+
+        if (playerCollider == null)
+            playerCollider = GetComponent<BoxCollider2D>();
 
         SetPlayerColor(false);
     }
@@ -59,24 +72,29 @@ public class PlayerController : MonoBehaviour
 
         StartCoroutine(FlipControlsRoutine());
         if (healthBar != null) healthBar.ResetHealth();
+
+        // Snap player to exact ground at start
+        Vector3 pos = transform.position;
+        transform.position = new Vector3(pos.x, groundY, pos.z);
     }
 
     void Update()
     {
-        // Check if player is grounded
-        isGrounded = Physics2D.OverlapBox(transform.position + Vector3.down * 0.6f,
-                                           new Vector2(0.5f, 0.1f), 0f, groundLayer);
-
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        // Arrow keys
+        // --- GROUND CHECK ---
+        float skinWidth = 0.01f; // tiny offset to ensure contact
+        Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + Vector2.down * (playerCollider.size.y / 2 + skinWidth);
+        Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f); // thin slice at feet
+        isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer);
+
+        // --- INPUTS ---
         bool rawDownHold = keyboard.downArrowKey.isPressed;
         bool rawUpHold = keyboard.upArrowKey.isPressed;
         bool rawDownPressed = keyboard.downArrowKey.wasPressedThisFrame;
         bool rawUpPressed = keyboard.upArrowKey.wasPressedThisFrame;
 
-        // WASD keys
         bool wHold = keyboard.wKey.isPressed;
         bool sHold = keyboard.sKey.isPressed;
         bool wPressed = keyboard.wKey.wasPressedThisFrame;
@@ -84,23 +102,42 @@ public class PlayerController : MonoBehaviour
         bool aHold = keyboard.aKey.isPressed;
         bool dHold = keyboard.dKey.isPressed;
 
-        // Determine crouch and jump (supporting both arrow keys and WASD)
+        // --- CROUCH ---
         isCrouching = controlsFlipped ? (rawUpHold || wHold) : (rawDownHold || sHold);
-        bool jumpPressed = controlsFlipped ? (rawDownPressed || sPressed) : (rawUpPressed || wPressed);
 
-        // Horizontal movement
+        // --- JUMP ---
+        bool jumpPressed = controlsFlipped ? (rawDownPressed || sPressed) : (rawUpPressed || wPressed);
+        if (isGrounded && !isCrouching && jumpPressed)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
+        // --- HORIZONTAL MOVEMENT ---
         float moveInput = 0f;
         if (keyboard.leftArrowKey.isPressed || aHold) moveInput = -1f;
         if (keyboard.rightArrowKey.isPressed || dHold) moveInput = 1f;
         if (controlsFlipped) moveInput *= -1f;
 
-        // Apply movement
         float currentSpeed = isCrouching ? moveSpeed * crouchSpeedMultiplier : moveSpeed;
         rb.position += new Vector2(moveInput * currentSpeed * Time.deltaTime, 0f);
 
-        // Jump
-        if (isGrounded && !isCrouching && jumpPressed)
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        // --- CROUCH ANIMATION ---
+        HandleCrouchAnimation();
+    }
+
+    private void HandleCrouchAnimation()
+    {
+        if (playerCollider != null)
+        {
+            playerCollider.size = Vector2.Lerp(playerCollider.size,
+                                               isCrouching ? crouchSize : standSize,
+                                               Time.deltaTime * crouchSmoothSpeed);
+            playerCollider.offset = Vector2.Lerp(playerCollider.offset,
+                                                 isCrouching ? crouchOffset : standOffset,
+                                                 Time.deltaTime * crouchSmoothSpeed);
+        }
+
+        // Only scale sprite, do NOT move Y position
+        float targetYScale = isCrouching ? crouchSize.y / standSize.y : 1f;
+        sr.transform.localScale = new Vector3(1f, Mathf.Lerp(sr.transform.localScale.y, targetYScale, Time.deltaTime * crouchSmoothSpeed), 1f);
     }
 
     private IEnumerator FlipControlsRoutine()
@@ -161,7 +198,16 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(transform.position + Vector3.down * 0.6f, new Vector3(0.5f, 0.1f, 0.1f));
+        if (playerCollider != null)
+        {
+            float skinWidth = 0.01f;
+            Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + Vector2.down * (playerCollider.size.y / 2 + skinWidth);
+            Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f);
+            Gizmos.color = Color.red;
+            Gizmos.DrawCube(boxCenter, boxSize);
+        }
     }
 }
+
+
+

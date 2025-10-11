@@ -1908,8 +1908,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
   jumpForce: 10
-  minX: -1
-  maxX: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
