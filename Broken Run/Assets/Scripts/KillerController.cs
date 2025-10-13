@@ -22,7 +22,7 @@ public class KillerController : MonoBehaviour
     {
         startTime = Time.time;
         transform.position = new Vector3(spawnX, groundY + 1.5f, 0);
-        transform.localScale = new Vector3(1f, 3f, 1f);
+        transform.localScale = new Vector3(1f, 8f, 1f);
 
         solidCollider = gameObject.AddComponent<BoxCollider2D>();
         solidCollider.isTrigger = false;

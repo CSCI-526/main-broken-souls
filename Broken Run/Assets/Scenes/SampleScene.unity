@@ -1610,11 +1610,7 @@ MonoBehaviour:
   killerPrefab: {fileID: 1574919655}
   coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
   groundTiles: []
-  enableCeiling: 1
   ceilingY: 4.5
-  mirrorCeilingVisual: 0
-  spawnCoinsOnCeiling: 0
-  ceilingCoinChance: 0.2
   ceilingTiles: []
 --- !u!60 &967972292
 PolygonCollider2D:
@@ -1920,7 +1916,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   baseMoveSpeed: 5
-  baseJumpForce: 19
+  baseJumpForce: 15
   speedScaleFactor: 0.2
   crouchSpeedMultiplier: 0.5
   playerCollider: {fileID: 1256906665}
@@ -1935,6 +1931,10 @@ MonoBehaviour:
   shieldBounceForce: 6
   healthBar: {fileID: 1837687999}
   damageCooldown: 0.5
+  minInterval: 8
+  maxInterval: 14
+  minEffectDuration: 3
+  maxEffectDuration: 5
 --- !u!61 &1256906665
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2323,7 +2323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 345, y: -161}
+  m_AnchoredPosition: {x: 580, y: -161}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1521757693
@@ -2584,7 +2584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1680a66b66f4413a991421483b1980e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KillerController
-  groundY: -4
+  groundY: -1.5
   spawnX: -12.2
   oscillationAmplitude: 1
   oscillationSpeed: 2
