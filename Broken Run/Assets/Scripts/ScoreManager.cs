@@ -15,8 +15,17 @@ public class ScoreManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // Reset instance on scene reload to prevent blue screen issues
+        Instance = this;
+    }
+
+    void Start()
+    {
+        // Reset score when scene starts
+        score = 0f;
+        isGameOver = false;
+        if (scoreText != null)
+            scoreText.text = "Score: 0";
     }
 
     void Update()
@@ -24,7 +33,8 @@ public class ScoreManager : MonoBehaviour
         if (isGameOver) return;
 
         score += Time.deltaTime * scoreRate;
-        scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
+        if (scoreText != null)
+            scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
     }
 
     public void GameOver()
@@ -76,11 +86,12 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void AddScore(int amount)
-{
-    if (isGameOver) return;
+    {
+        if (isGameOver) return;
 
-    score += amount;
-    scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
-}
+        score += amount;
+        if (scoreText != null)
+            scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
+    }
 
 }
