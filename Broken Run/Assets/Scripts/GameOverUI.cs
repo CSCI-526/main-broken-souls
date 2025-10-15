@@ -35,9 +35,10 @@ public class GameOverUI : MonoBehaviour
 
     public void RestartGame()
     {
+        // Reset time scale BEFORE loading scene
         Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-        );
+        
+        // Use scene build index (more reliable than name)
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }
