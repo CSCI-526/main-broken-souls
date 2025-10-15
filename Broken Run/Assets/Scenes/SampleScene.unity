@@ -1129,8 +1129,9 @@ MonoBehaviour:
   obstaclePrefabs:
   - {fileID: 342965573824974066, guid: 21e217d43f0800e459efbc124bf617bb, type: 3}
   - {fileID: 2974635967670695261, guid: 32437f59b3a23344d901dc6e7b758a11, type: 3}
+  - {fileID: 9048289401304330613, guid: eb929173241d64d4897aab98f6368447, type: 3}
   airObstaclePrefabs:
-  - {fileID: 342965573824974066, guid: 21e217d43f0800e459efbc124bf617bb, type: 3}
+  - {fileID: 342965573824974066, guid: 32ee5cda58978aa4084672321f84ec6f, type: 3}
   shieldPrefab: {fileID: 1313701721711133424, guid: fb1902486d0f640f28b5a639bd305041, type: 3}
   shieldSpawnChance: 0.1
   player: {fileID: 1256906662}
@@ -1561,7 +1562,6 @@ GameObject:
   m_Component:
   - component: {fileID: 967972290}
   - component: {fileID: 967972293}
-  - component: {fileID: 967972292}
   - component: {fileID: 967972291}
   m_Layer: 0
   m_Name: Ground Manager
@@ -1612,58 +1612,6 @@ MonoBehaviour:
   groundTiles: []
   ceilingY: 4.5
   ceilingTiles: []
---- !u!60 &967972292
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 967972288}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 5}
-      - {x: -0.47552827, y: 4.6545086}
-      - {x: -0.2938926, y: 4.0954914}
-      - {x: 0.29389268, y: 4.0954914}
-      - {x: 0.47552824, y: 4.6545086}
-  m_UseDelaunayMesh: 0
 --- !u!120 &967972293
 LineRenderer:
   serializedVersion: 2
@@ -1909,7 +1857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  jumpForce: 10
+  jumpForce: 6
   minX: -1
   maxX: 1
   groundLayer:
@@ -1927,6 +1875,7 @@ MonoBehaviour:
   crouchSmoothSpeed: 10
   normalColor: {r: 0.8490566, g: 0.4715066, b: 0.23629406, a: 1}
   flippedColor: {r: 0.7735849, g: 0.14231044, b: 0.7601196, a: 1}
+  gravityFlippedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   hasShield: 1
   shieldBounceForce: 6
   healthBar: {fileID: 1837687999}
@@ -3534,11 +3483,11 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
+  - {fileID: 712689106}
   - {fileID: 619394802}
   - {fileID: 1521757695}
   - {fileID: 1256906662}
   - {fileID: 967972290}
-  - {fileID: 712689106}
   - {fileID: 1574919660}
   - {fileID: 853154559}
   - {fileID: 107158737}

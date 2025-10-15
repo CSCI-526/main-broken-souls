@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7835653428912628856}
   - component: {fileID: 6373224823087185756}
   m_Layer: 0
-  m_Name: Obstacle1
+  m_Name: Obstacle1 1
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.84469, y: 8.275, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

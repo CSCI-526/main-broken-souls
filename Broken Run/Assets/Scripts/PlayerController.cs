@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [Header("Colors")]
     public Color normalColor = Color.white;
     public Color flippedColor = Color.red;
+    public Color gravityFlippedColor = Color.blue;
 
     [Header("Power-Ups")]
     public bool hasShield = false;
@@ -275,11 +276,19 @@ public class PlayerController : MonoBehaviour
         jumpForce = baseJumpForce + worldSpeed * (speedScaleFactor * 0.5f);
     }
 
-    private void SetPlayerColor(bool flipped)
+   private void SetPlayerColor(bool anyFlip)
+{
+    if (sr != null)
     {
-        if (sr != null)
-            sr.color = flipped ? flippedColor : normalColor;
+        if (gravityFlipped)             // gravity flip has priority
+            sr.color = gravityFlippedColor;
+        else if (controlsFlipped)       // control flip
+            sr.color = flippedColor;
+        else
+            sr.color = normalColor;     // no flip
     }
+}
+
 
     private void OnDrawGizmos()
     {
