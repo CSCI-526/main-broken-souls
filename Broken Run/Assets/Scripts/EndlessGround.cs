@@ -132,21 +132,35 @@ public class EndlessGround : MonoBehaviour
     }
 
     void SpawnTile(int index, float xPos)
+{
+    GameObject prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
+    if (prefab == null) return;
+
+    GameObject tile = Instantiate(prefab, new Vector3(xPos, yPos, 0), Quaternion.identity);
+    groundTiles[index] = tile.transform;
+
+    // 30% chance to spawn coin
+    if (coinPrefab != null && Random.value < 0.3f)
     {
-        GameObject prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
-        if (prefab == null) return;
+        Vector3 spawnPos = new Vector3(xPos, yPos + 1.5f, 0);
 
-        GameObject tile = Instantiate(prefab, new Vector3(xPos, yPos, 0), Quaternion.identity);
-        groundTiles[index] = tile.transform;
+        // ✅ Prevent spawning coin on obstacle
+        float checkRadius = 0.4f; // Adjust based on coin size
+        LayerMask obstacleLayer = LayerMask.GetMask("Obstacle"); // make sure your obstacles use this layer
 
-        // 30% chance to spawn coin
-        if (coinPrefab != null && Random.value < 0.3f)
+        bool overlaps = Physics2D.OverlapCircle(spawnPos, checkRadius, obstacleLayer);
+        if (!overlaps)
         {
-            Vector3 spawnPos = new Vector3(xPos, yPos + 1.5f, 0);
             GameObject coin = Instantiate(coinPrefab, spawnPos, Quaternion.identity);
             coin.transform.SetParent(tile.transform);
         }
+        else
+        {
+            Debug.Log("Skipped coin spawn — overlaps obstacle");
+        }
     }
+}
+
 
     // ===== NEW =====
     void SpawnCeilingTile(int index, float xPos)
