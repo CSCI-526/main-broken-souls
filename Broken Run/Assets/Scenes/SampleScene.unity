@@ -1132,6 +1132,7 @@ MonoBehaviour:
   - {fileID: 9048289401304330613, guid: eb929173241d64d4897aab98f6368447, type: 3}
   airObstaclePrefabs:
   - {fileID: 342965573824974066, guid: 32ee5cda58978aa4084672321f84ec6f, type: 3}
+  - {fileID: 1153973026827681992, guid: 3f3fae7042a7e413ab8c8509f3c1980c, type: 3}
   shieldPrefab: {fileID: 1313701721711133424, guid: fb1902486d0f640f28b5a639bd305041, type: 3}
   shieldSpawnChance: 0.1
   player: {fileID: 1256906662}

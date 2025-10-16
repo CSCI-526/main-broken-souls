@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     [Header("Base Movement Settings")]
     public float baseMoveSpeed = 5f;
     public float baseJumpForce = 7f;
-    public float speedScaleFactor = 0.2f;
+    public float speedScaleFactor = 0.1f;
 
     [Header("Crouch")]
     public float crouchSpeedMultiplier = 0.5f;
