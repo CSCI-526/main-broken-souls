@@ -40,29 +40,28 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI")]
     public HealthBar healthBar;
+    [SerializeField] private ModeUIController modeUI; // Drag your ModeUIController here
 
     [Header("Damage")]
     public float damageCooldown = 0.5f;
     private float lastDamageTime = -999f;
 
-    // NEW: Random timed effect (control flip OR gravity flip)
     [Header("Random Effect Timing")]
-    public float minInterval = 8f;         // Min wait time before next effect
-    public float maxInterval = 14f;        // Max wait time before next effect
-    public float minEffectDuration = 3f;   // Min duration the effect stays active
-    public float maxEffectDuration = 5f;   // Max duration the effect stays active
-    // END NEW
+    public float minInterval = 8f;
+    public float maxInterval = 14f;
+    public float minEffectDuration = 3f;
+    public float maxEffectDuration = 5f;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool isGrounded = false;
     private bool isCrouching = false;
 
-    private bool controlsFlipped = false;   // original control-flip flag (now driven by random routine)
-    private bool gravityFlipped = false;    // NEW: whether gravity is inverted
+    private bool controlsFlipped = false;
+    private bool gravityFlipped = false;
 
-    private float groundY = -3.487f; // exact top of ground
-    private float originalGravityScale = 3f; // NEW: keep the base gravity to restore
+    private float groundY = -3.487f;
+    private float originalGravityScale = 3f;
 
     void Awake()
     {
@@ -74,7 +73,7 @@ public class PlayerController : MonoBehaviour
         if (playerCollider == null)
             playerCollider = GetComponent<BoxCollider2D>();
 
-        originalGravityScale = rb.gravityScale; // NEW: remember base gravity
+        originalGravityScale = rb.gravityScale;
         SetPlayerColor(false);
     }
 
@@ -83,8 +82,7 @@ public class PlayerController : MonoBehaviour
         moveSpeed = baseMoveSpeed;
         jumpForce = baseJumpForce;
 
-        // StartCoroutine(FlipControlsRoutine());  // (Removed) old fixed-timer flip
-        StartCoroutine(RandomEffectRoutine());     // NEW: random timed effect routine
+        StartCoroutine(RandomEffectRoutine()); // start random flip/gravity routine
 
         if (healthBar != null) healthBar.ResetHealth();
 
@@ -99,18 +97,17 @@ public class PlayerController : MonoBehaviour
         if (keyboard == null) return;
 
         // --- GROUND CHECK ---
-        // NEW: When gravity is flipped, the "feet" are on the top side, so probe in the opposite direction.
-        float skinWidth = 0.01f; // tiny offset to ensure contact
-        Vector2 feetDir = gravityFlipped ? Vector2.up : Vector2.down; // NEW
+        float skinWidth = 0.01f;
+        Vector2 feetDir = gravityFlipped ? Vector2.up : Vector2.down;
         Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + feetDir * (playerCollider.size.y / 2 + skinWidth);
-        Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f); // thin slice at feet
+        Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f);
         isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer);
 
         // --- INPUTS ---
         bool rawDownHold = keyboard.downArrowKey.isPressed;
-        bool rawUpHold   = keyboard.upArrowKey.isPressed;
+        bool rawUpHold = keyboard.upArrowKey.isPressed;
         bool rawDownPressed = keyboard.downArrowKey.wasPressedThisFrame;
-        bool rawUpPressed   = keyboard.upArrowKey.wasPressedThisFrame;
+        bool rawUpPressed = keyboard.upArrowKey.wasPressedThisFrame;
 
         bool wHold = keyboard.wKey.isPressed;
         bool sHold = keyboard.sKey.isPressed;
@@ -120,25 +117,26 @@ public class PlayerController : MonoBehaviour
         bool dHold = keyboard.dKey.isPressed;
 
         // Merge W/↑ as "up", S/↓ as "down"
-        bool upHold      = rawUpHold   || wHold;
-        bool downHold    = rawDownHold || sHold;
-        bool upPressed   = rawUpPressed   || wPressed;
+        bool upHold = rawUpHold || wHold;
+        bool downHold = rawDownHold || sHold;
+        bool upPressed = rawUpPressed || wPressed;
         bool downPressed = rawDownPressed || sPressed;
 
         // If exactly one of the two flips is active, invert vertical input mapping (XOR)
         bool invertVertical = controlsFlipped ^ gravityFlipped;
-        bool vUpHold        = invertVertical ? downHold    : upHold;
-        bool vDownHold      = invertVertical ? upHold      : downHold;
-        bool vUpPressed     = invertVertical ? downPressed : upPressed;
-        bool vDownPressed   = invertVertical ? upPressed   : downPressed;
+        bool vUpHold = invertVertical ? downHold : upHold;
+        bool vDownHold = invertVertical ? upHold : downHold;
+        bool vUpPressed = invertVertical ? downPressed : upPressed;
+        bool vDownPressed = invertVertical ? upPressed : downPressed;
 
-        // --- CROUCH --- (use the effective "down" hold)
+        // --- CROUCH ---
         isCrouching = vDownHold;
 
-        // --- JUMP --- (use the effective "up" press)
+        // --- JUMP ---
         bool jumpPressed = vUpPressed;
         if (isGrounded && !isCrouching && jumpPressed)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, gravityFlipped ? -jumpForce : jumpForce);
+
         // --- HORIZONTAL MOVEMENT ---
         float moveInput = 0f;
         if (keyboard.leftArrowKey.isPressed || aHold) moveInput = -1f;
@@ -156,61 +154,66 @@ public class PlayerController : MonoBehaviour
     {
         if (playerCollider != null)
         {
-            playerCollider.size = Vector2.Lerp(playerCollider.size,
-                                               isCrouching ? crouchSize : standSize,
-                                               Time.deltaTime * crouchSmoothSpeed);
-            playerCollider.offset = Vector2.Lerp(playerCollider.offset,
-                                                 isCrouching ? crouchOffset : standOffset,
-                                                 Time.deltaTime * crouchSmoothSpeed);
+            playerCollider.size = Vector2.Lerp(
+                playerCollider.size,
+                isCrouching ? crouchSize : standSize,
+                Time.deltaTime * crouchSmoothSpeed
+            );
+
+            playerCollider.offset = Vector2.Lerp(
+                playerCollider.offset,
+                isCrouching ? crouchOffset : standOffset,
+                Time.deltaTime * crouchSmoothSpeed
+            );
         }
 
         // Only scale sprite, do NOT move Y position
         float targetYScale = isCrouching ? crouchSize.y / standSize.y : 1f;
-        sr.transform.localScale = new Vector3(1f, Mathf.Lerp(sr.transform.localScale.y, targetYScale, Time.deltaTime * crouchSmoothSpeed), 1f);
+        sr.transform.localScale = new Vector3(
+            1f,
+            Mathf.Lerp(sr.transform.localScale.y, targetYScale, Time.deltaTime * crouchSmoothSpeed),
+            1f
+        );
     }
 
-    // NEW: Randomly choose between control-flip and gravity-flip, keep it for a short duration, then revert
+    // ========= 2b) Minimal RandomEffectRoutine so it compiles =========
     private IEnumerator RandomEffectRoutine()
     {
         while (true)
         {
-            // Wait for a random interval before triggering the next effect
+            // wait before next mode
             float wait = Random.Range(minInterval, maxInterval);
             yield return new WaitForSeconds(wait);
 
-            // Randomly pick one effect: 1 = control flip, 0 = gravity flip
-            bool pickControl = Random.value < 0.5f;
+            // pick a mode (ModeType lives in its own file)
+            ModeType nextMode = (Random.value < 0.5f) ? ModeType.ReversedControls : ModeType.AntiGravity;
+
+            // 1) 3s forecast
+            if (modeUI != null) modeUI.ShowForecast(nextMode, 3f);
+            yield return new WaitForSeconds(3f);
+
+            // 2) activate for duration
             float duration = Random.Range(minEffectDuration, maxEffectDuration);
+            if (nextMode == ModeType.ReversedControls) SetControlFlip(true);
+            else SetGravityFlip(true);
 
-            if (pickControl)
+            if (modeUI != null)
             {
-                // Activate control flip
-                SetControlFlip(true);
-                Debug.Log($"⚠ Controls FLIPPED for {duration:F1}s");
-
-                yield return new WaitForSeconds(duration);
-
-                // Revert control flip
-                SetControlFlip(false);
-                Debug.Log("✅ Controls NORMAL");
+                modeUI.PlayWarningBanner(nextMode);
+                modeUI.StartModeTimer(nextMode, duration);
             }
-            else
-            {
-                // Activate gravity flip
-                SetGravityFlip(true);
-                Debug.Log($"⚠ Gravity FLIPPED for {duration:F1}s");
 
-                yield return new WaitForSeconds(duration);
+            yield return new WaitForSeconds(duration);
 
-                // Revert gravity flip
-                SetGravityFlip(false);
-                Debug.Log("✅ Gravity NORMAL");
-            }
+            // 3) clear
+            if (nextMode == ModeType.ReversedControls) SetControlFlip(false);
+            else SetGravityFlip(false);
+
+            if (modeUI != null) modeUI.HideAll();
         }
     }
-    // END NEW
 
-    // NEW: helpers to toggle effects, keeping visuals consistent
+    // Toggle helpers
     private void SetControlFlip(bool on)
     {
         controlsFlipped = on;
@@ -223,24 +226,6 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = originalGravityScale * (on ? -1f : 1f);
         SetPlayerColor(on || controlsFlipped); // keep red while any effect is active
     }
-    // END NEW
-
-    // (Old fixed-timer control flip routine retained below for reference; no longer used)
-    // private IEnumerator FlipControlsRoutine()
-    // {
-    //     while (true)
-    //     {
-    //         yield return new WaitForSeconds(20f);
-    //         controlsFlipped = true;
-    //         SetPlayerColor(true);
-    //         Debug.Log("⚠ Controls FLIPPED");
-
-    //         yield return new WaitForSeconds(10f);
-    //         controlsFlipped = false;
-    //         SetPlayerColor(false);
-    //         Debug.Log("✅ Controls NORMAL");
-    //     }
-    // }
 
     public void TakeDamage(float amount)
     {
@@ -255,7 +240,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("💀 Player died!");
             ScoreManager.Instance.GameOver();
+            #if UNITY_2022_2_OR_NEWER
+            FindFirstObjectByType<GameOverUI>().ShowGameOver();
+            #else
             FindObjectOfType<GameOverUI>().ShowGameOver();
+            #endif
+
             Time.timeScale = 0f;
         }
     }
@@ -295,7 +285,7 @@ public class PlayerController : MonoBehaviour
         if (playerCollider != null)
         {
             float skinWidth = 0.01f;
-            // NEW: visualize the feet probe toward "gravity direction"
+            // visualize the feet probe toward "gravity direction"
             Vector2 feetDir = gravityFlipped ? Vector2.up : Vector2.down;
             Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + feetDir * (playerCollider.size.y / 2 + skinWidth);
             Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f);

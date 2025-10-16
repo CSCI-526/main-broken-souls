@@ -68,7 +68,12 @@ public class KillerController : MonoBehaviour
                     pc.healthBar.SetHealth(0f);
 
                 ScoreManager.Instance.GameOver();
+                #if UNITY_2022_2_OR_NEWER
+                FindFirstObjectByType<GameOverUI>().ShowGameOver();
+                #else
                 FindObjectOfType<GameOverUI>().ShowGameOver();
+                #endif
+
                 Time.timeScale = 0f;
             }
         }
