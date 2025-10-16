@@ -2230,8 +2230,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   baseMoveSpeed: 5
-  baseJumpForce: 15
-  speedScaleFactor: 0.2
+  baseJumpForce: 14
+  speedScaleFactor: 0.1
   crouchSpeedMultiplier: 0.5
   playerCollider: {fileID: 1256906665}
   standSize: {x: 0.5, y: 1.5}
