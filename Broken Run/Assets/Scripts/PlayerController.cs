@@ -303,4 +303,10 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawCube(boxCenter, boxSize);
         }
     }
+
+    // Public method for other scripts to check gravity state
+    public bool IsGravityFlipped()
+    {
+        return gravityFlipped;
+    }
 }

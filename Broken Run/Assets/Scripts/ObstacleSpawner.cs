@@ -143,6 +143,10 @@ public class ObstacleSpawner : MonoBehaviour
         bool isShield = false;
         bool spawnAir = false;
 
+        // Check if gravity is flipped from PlayerController
+        PlayerController pc = player.GetComponent<PlayerController>();
+        bool gravityFlipped = (pc != null && pc.IsGravityFlipped());
+
         // Decide shield first
         if (Random.value < shieldSpawnChance && shieldPrefab != null)
         {
@@ -163,9 +167,12 @@ public class ObstacleSpawner : MonoBehaviour
 
         float spawnX = player.position.x + spawnDistance;
 
-        // Find ground tile under spawnX
+        // NEW: Choose correct tiles based on gravity state
+        Transform[] tilesToCheck = gravityFlipped ? groundManager.ceilingTiles : groundManager.groundTiles;
+        
+        // Find tile at spawnX
         Transform tileToSpawnOn = null;
-        foreach (var tile in groundManager.groundTiles)
+        foreach (var tile in tilesToCheck)
         {
             if (tile == null) continue;
             float left = tile.position.x - groundManager.tileWidth / 2f;
@@ -187,14 +194,24 @@ public class ObstacleSpawner : MonoBehaviour
         }
         else if (spawnAir)
         {
-            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + airOffset, 0);
+            // For air obstacles, adjust based on gravity
+            float airOffsetDirection = gravityFlipped ? -airOffset : airOffset;
+            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + airOffsetDirection, 0);
         }
         else
         {
-            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + 0.5f, 0);
+            // For ground/ceiling obstacles
+            float obstacleOffset = gravityFlipped ? -0.5f : 0.5f;
+            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + obstacleOffset, 0);
         }
 
         GameObject obj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+
+        // Flip obstacle sprite if on ceiling
+        if (gravityFlipped && !isShield)
+        {
+            obj.transform.localScale = new Vector3(obj.transform.localScale.x, -Mathf.Abs(obj.transform.localScale.y), obj.transform.localScale.z);
+        }
 
         // Rigidbody2D so it moves with the ground
         Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
@@ -206,10 +223,11 @@ public class ObstacleSpawner : MonoBehaviour
         mover.speed = groundManager.scrollSpeed;
         mover.despawnX = player.position.x - 20f;
 
-        // Optionally attach coin above obstacles
+        // Optionally attach coin - position depends on gravity
         if (!isShield && groundManager.coinPrefab != null && Random.value < 0.5f)
         {
-            Vector3 coinPos = obj.transform.position + Vector3.up * 2.5f;
+            float coinOffsetDirection = gravityFlipped ? -2.5f : 2.5f;
+            Vector3 coinPos = obj.transform.position + Vector3.up * coinOffsetDirection;
             GameObject coin = Instantiate(groundManager.coinPrefab, coinPos, Quaternion.identity);
             coin.transform.SetParent(obj.transform);
         }
