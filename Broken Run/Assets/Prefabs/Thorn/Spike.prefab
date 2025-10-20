@@ -123,6 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleCollision
   explosionPrefab: {fileID: 3602895421638106805, guid: a492921cc88f0490b93f89be14764c83, type: 3}
+  bounceForceX: 8
+  bounceForceY: 8
 --- !u!1 &4087568141961986169
 GameObject:
   m_ObjectHideFlags: 0

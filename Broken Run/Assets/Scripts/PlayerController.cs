@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -51,6 +52,9 @@ public class PlayerController : MonoBehaviour
     public float maxInterval = 14f;
     public float minEffectDuration = 3f;
     public float maxEffectDuration = 5f;
+
+    [Header("UI image")]
+    public Image image;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -189,8 +193,15 @@ public class PlayerController : MonoBehaviour
             ModeType nextMode = (Random.value < 0.5f) ? ModeType.ReversedControls : ModeType.AntiGravity;
 
             // 1) 3s forecast
+            if(nextMode == ModeType.ReversedControls){
+                image.color = flippedColor;//
+            }
+            if(nextMode == ModeType.AntiGravity){
+                image.color = gravityFlippedColor;
+            }
             if (modeUI != null) modeUI.ShowForecast(nextMode, 3f);
             yield return new WaitForSeconds(3f);
+            
 
             // 2) activate for duration
             float duration = Random.Range(minEffectDuration, maxEffectDuration);
