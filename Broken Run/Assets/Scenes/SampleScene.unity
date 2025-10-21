@@ -1853,8 +1853,8 @@ MonoBehaviour:
   airOffset: 2.5
   airSpawnChance: 0.5
   shieldTipPanel: {fileID: 1460212363}
-  shieldTipDuration: 2.5
-  shieldTipDelay: 1
+  shieldTipDuration: 3
+  shieldTipDelay: 0
 --- !u!4 &712689106
 Transform:
   m_ObjectHideFlags: 0
@@ -4263,7 +4263,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<color=#30F500>Shield</color> has appeared! Pick it up to block one collision.
+  m_text: '<color=#30F500>Shield</color> has spawned! Pick it up to block one collision.
 
 '
   m_isRightToLeft: 0

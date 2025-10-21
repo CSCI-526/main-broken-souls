@@ -130,7 +130,6 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject shieldTipPanel;
     public float shieldTipDuration = 2.5f;
     public float shieldTipDelay = 1f;
-    private bool hasShownShieldTip = false;
 
     private float timer;
 
@@ -199,11 +198,8 @@ public class ObstacleSpawner : MonoBehaviour
         {
             spawnPos = new Vector3(spawnX, player.position.y + Random.Range(-0.5f, 0.5f), 0);
             StartCoroutine(DelayShieldTip());
-            if (!hasShownShieldTip)
-            {
-                //hasShownShieldTip = true;
-                ShowShieldTip();
-            }
+            ShowShieldTip();
+            
         }
         else if (spawnAir)
         {
