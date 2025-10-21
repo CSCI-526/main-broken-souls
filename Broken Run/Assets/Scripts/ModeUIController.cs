@@ -25,9 +25,13 @@ public class ModeUIController : MonoBehaviour
     [Header("Forecast (3s) — Advanced")]
     [SerializeField] private ModeIndicatorUI modeIndicator;        // optional: advanced script
 
+    [Header("Root Fade (for Game Over)")]
+    [SerializeField] private CanvasGroup rootGroup;                // CanvasGroup on the ModeUI root
+
     Coroutine timerRoutine;
     Coroutine bannerRoutine;
     Coroutine forecastRoutine;
+    Coroutine fadeRoutine;
 
     void Awake()
     {
@@ -36,6 +40,8 @@ public class ModeUIController : MonoBehaviour
         if (antiGravityTimerText) antiGravityTimerText.gameObject.SetActive(false);
         if (modeIndicatorRoot) modeIndicatorRoot.SetActive(false);
         if (flipWarningBanner) flipWarningBanner.SetActive(false);
+
+        if (rootGroup == null) rootGroup = GetComponent<CanvasGroup>();
     }
 
     // ===================== PUBLIC API =====================
@@ -75,12 +81,12 @@ public class ModeUIController : MonoBehaviour
         bannerRoutine = StartCoroutine(BannerCo());
     }
 
-    /// <summary>Hide all forecast/timers/banners immediately.</summary>
+    /// <summary>Hide all forecast/timers/banners immediately (no fade).</summary>
     public void HideAll()
     {
-        if (timerRoutine != null) StopCoroutine(timerRoutine);
-        if (forecastRoutine != null) StopCoroutine(forecastRoutine);
-        if (bannerRoutine != null) StopCoroutine(bannerRoutine);
+        if (timerRoutine != null) { StopCoroutine(timerRoutine); timerRoutine = null; }
+        if (forecastRoutine != null) { StopCoroutine(forecastRoutine); forecastRoutine = null; }
+        if (bannerRoutine != null) { StopCoroutine(bannerRoutine); bannerRoutine = null; }
 
         if (flipTimerText) flipTimerText.gameObject.SetActive(false);
         if (antiGravityTimerText) antiGravityTimerText.gameObject.SetActive(false);
@@ -88,6 +94,21 @@ public class ModeUIController : MonoBehaviour
         if (flipWarningBanner) flipWarningBanner.SetActive(false);
 
         if (modeIndicator != null) modeIndicator.HideImmediate();
+    }
+
+    /// <summary>
+    /// Fade the whole ModeUI out, then hide & reset everything.
+    /// Call this on Game Over.
+    /// </summary>
+    public void HideAllWithFade(float duration = 0.25f)
+    {
+        // Stop any running animations/timers first
+        if (timerRoutine != null) { StopCoroutine(timerRoutine); timerRoutine = null; }
+        if (forecastRoutine != null) { StopCoroutine(forecastRoutine); forecastRoutine = null; }
+        if (bannerRoutine != null) { StopCoroutine(bannerRoutine); bannerRoutine = null; }
+
+        if (fadeRoutine != null) StopCoroutine(fadeRoutine);
+        fadeRoutine = StartCoroutine(FadeOutAndHide(duration));
     }
 
     // ===================== COROUTINES =====================
@@ -129,7 +150,6 @@ public class ModeUIController : MonoBehaviour
 
         while (t > 0f)
         {
-            // e.g., "Back to normal in 3"
             target.text = prefix + Mathf.CeilToInt(t).ToString();
             t -= Time.deltaTime; // scaled time (follows gameplay)
             yield return null;
@@ -185,5 +205,28 @@ public class ModeUIController : MonoBehaviour
 
         flipWarningBanner.SetActive(false);
         bannerRoutine = null;
+    }
+
+    // Fade out root, then fully hide/reset UI
+    IEnumerator FadeOutAndHide(float dur)
+    {
+        if (rootGroup != null)
+        {
+            float start = rootGroup.alpha;
+            float t = 0f;
+            while (t < dur)
+            {
+                t += Time.unscaledDeltaTime;             // fade works even if game is paused
+                rootGroup.alpha = Mathf.Lerp(start, 0f, t / dur);
+                yield return null;
+            }
+            rootGroup.alpha = 0f;
+        }
+
+        HideAll();                 // fully disable everything
+        fadeRoutine = null;
+
+        // Optional: restore alpha so next time it shows immediately
+        if (rootGroup != null) rootGroup.alpha = 1f;
     }
 }

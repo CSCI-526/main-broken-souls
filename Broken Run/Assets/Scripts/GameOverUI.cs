@@ -7,7 +7,10 @@ public class GameOverUI : MonoBehaviour
     [Header("UI Reference")]
     public GameObject gameOverPanel;
     public TextMeshProUGUI finalScoreText;
-    public TextMeshProUGUI leaderboardText; 
+    public TextMeshProUGUI leaderboardText;
+
+    [Header("Other UI")]
+    public ModeUIController modeUI;   // <-- assign in Inspector
 
     void Start()
     {
@@ -16,29 +19,28 @@ public class GameOverUI : MonoBehaviour
 
     public void ShowGameOver()
     {
+        // 1) fade out the “Back to normal in …” timers / banners
+        if (modeUI != null) modeUI.HideAllWithFade(0.25f);
+
+        // 2) now show the game-over UI
         gameOverPanel.SetActive(true);
 
         int finalScore = ScoreManager.Instance.GetFinalScore();
         finalScoreText.text = $"Final Score: {finalScore}";
 
-        
         List<int> topScores = ScoreManager.Instance.GetTopScores();
 
-        
         string leaderboard = "Leaderboard:\n";
         for (int i = 0; i < topScores.Count; i++)
-        {
             leaderboard += $"{i + 1}. {topScores[i]}\n";
-        }
         leaderboardText.text = leaderboard;
     }
 
     public void RestartGame()
     {
-        // Reset time scale BEFORE loading scene
         Time.timeScale = 1f;
-        
-        // Use scene build index (more reliable than name)
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        );
     }
 }
