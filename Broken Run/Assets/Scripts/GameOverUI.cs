@@ -19,7 +19,7 @@ public class GameOverUI : MonoBehaviour
 
     public void ShowGameOver()
     {
-        // 1) fade out the “Back to normal in …” timers / banners
+        // 1) fade out the ï¿½Back to normal in ï¿½ï¿½ timers / banners
         if (modeUI != null) modeUI.HideAllWithFade(0.25f);
 
         // 2) now show the game-over UI
@@ -38,9 +38,10 @@ public class GameOverUI : MonoBehaviour
 
     public void RestartGame()
     {
+        // Reset time scale BEFORE loading scene
         Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-        );
+        
+        // Use scene build index (more reliable than name)
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }
