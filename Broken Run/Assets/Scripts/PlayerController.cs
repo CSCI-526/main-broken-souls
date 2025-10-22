@@ -50,8 +50,8 @@ public class PlayerController : MonoBehaviour
     [Header("Random Effect Timing")]
     public float minInterval = 8f;
     public float maxInterval = 14f;
-    public float minEffectDuration = 3f;
-    public float maxEffectDuration = 5f;
+    public float minEffectDuration = 10f;
+    public float maxEffectDuration = 15f;
 
     [Header("UI image")]
     public Image image;
@@ -273,8 +273,8 @@ public class PlayerController : MonoBehaviour
 
     public void AdjustToWorldSpeed(float worldSpeed)
     {
-        moveSpeed = baseMoveSpeed + worldSpeed * speedScaleFactor;
-        jumpForce = baseJumpForce + worldSpeed * (speedScaleFactor * 0.5f);
+        moveSpeed = baseMoveSpeed + worldSpeed * (speedScaleFactor * 0.001f);
+        jumpForce = baseJumpForce + worldSpeed * (speedScaleFactor * 0.001f);
     }
 
    private void SetPlayerColor(bool anyFlip)

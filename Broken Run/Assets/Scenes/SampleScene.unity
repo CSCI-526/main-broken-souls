@@ -1837,8 +1837,8 @@ MonoBehaviour:
   shieldSpawnChance: 0.15
   player: {fileID: 1256906662}
   groundManager: {fileID: 967972291}
-  spawnDistance: 20
-  spawnInterval: 3
+  spawnDistance: 25
+  spawnInterval: 5
   airOffset: 2.5
   airSpawnChance: 0.5
   shieldTipPanel: {fileID: 1460212363}
@@ -2875,7 +2875,7 @@ MonoBehaviour:
   tileWidth: 10
   yPos: -4.5
   scrollSpeed: 5
-  speedIncreaseRate: 0.5
+  speedIncreaseRate: 0.1
   maxScrollSpeed: 20
   player: {fileID: 1256906662}
   killerPrefab: {fileID: 1574919655}
@@ -3663,8 +3663,8 @@ MonoBehaviour:
   damageCooldown: 0.5
   minInterval: 8
   maxInterval: 14
-  minEffectDuration: 3
-  maxEffectDuration: 5
+  minEffectDuration: 10
+  maxEffectDuration: 15
   image: {fileID: 1476514044}
 --- !u!61 &1256906665
 BoxCollider2D:

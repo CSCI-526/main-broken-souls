@@ -11,7 +11,7 @@ public class EndlessGround : MonoBehaviour
 
     [Header("Scrolling")]
     public float scrollSpeed = 5f;
-    public float speedIncreaseRate = 0.5f;   // How fast world speed increases over time
+    public float speedIncreaseRate = 0.01f;   // How fast world speed increases over time
     public float maxScrollSpeed = 20f;       // Cap on max speed
 
     [Header("Player")]
