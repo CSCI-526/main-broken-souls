@@ -119,14 +119,14 @@ public class PauseManager : MonoBehaviour
     }
 
     public void QuitGame()
-    {
-        // In editor, Application.Quit does nothing, so log for clarity
-#if UNITY_EDITOR
-        Debug.Log("[PauseManager] QuitGame called (Editor)");
-#else
-        Application.Quit();
-#endif
-    }
+{
+    // Always unpause before switching scenes
+    Time.timeScale = 1f;
+    if (pauseAudioListener) AudioListener.pause = false;
+
+    // Load Start Menu scene
+    SceneManager.LoadScene("StartMenu");
+}
 
     private void SetMenuVisible(bool visible, bool setSelection)
     {
