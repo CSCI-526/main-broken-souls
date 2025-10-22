@@ -119,8 +119,8 @@ public class ObstacleSpawner : MonoBehaviour
     public EndlessGround groundManager;
 
     [Header("Spawn Settings")]
-    public float spawnDistance = 20f;
-    public float spawnInterval = 2f;
+    public float spawnDistance = 25f;
+    public float spawnInterval = 5f;
 
     [Header("Air Obstacle Settings")]
     public float airOffset = 2.5f;      // How high above ground for air obstacles
