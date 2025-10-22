@@ -747,18 +747,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28a72a475430244c95e479130deaabb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TipsManager
-  tipText: {fileID: 1485882589}
-  tips:
-  - When the block color changes, your controls are reversed!
-  - Press UP Arrow to jump over obstacles!
-  - "Keep moving, don\u2019t get caught by the killer!"
-  - 'High score tip: Stay calm and time your jumps!'
-  - Practice makes perfect. Keep trying!
-  - "Watch out for the Killer, don\u2019t get too close!"
-  tipInterval: 1
-  fadeDuration: 1
-  showDuration: 3
-  initialDelay: 4
 --- !u!4 &387777660
 Transform:
   m_ObjectHideFlags: 0
@@ -943,6 +931,7 @@ MonoBehaviour:
   finalScoreText: {fileID: 271321653}
   leaderboardText: {fileID: 301282153}
   modeUI: {fileID: 1771566876}
+  shieldTipUI: {fileID: 1460212363}
 --- !u!4 &408273363
 Transform:
   m_ObjectHideFlags: 0
@@ -4240,7 +4229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 138}
+  m_AnchoredPosition: {x: 385, y: 37}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1460212365
@@ -4263,7 +4252,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<color=#30F500>Shield</color> has spawned! Pick it up to block one collision.
+  m_text: '<color=#30F500>Shield</color> has spawned! Pick it up to BLOCK one collision.
 
 '
   m_isRightToLeft: 0
@@ -4298,7 +4287,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -4330,7 +4319,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -358.5884, y: 0, z: -358.5883, w: 0}
+  m_margin: {x: -807.59314, y: -102.99904, z: -51.879883, w: 97.24281}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
