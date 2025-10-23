@@ -1235,7 +1235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   player: {fileID: 1256906662}
   killer: {fileID: 1574919660}
-  offset: {x: 0, y: 1.6, z: -10}
+  offset: {x: 0, y: 1.57, z: -10}
 --- !u!1 &528314114
 GameObject:
   m_ObjectHideFlags: 0
