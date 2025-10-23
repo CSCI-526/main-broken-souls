@@ -15,13 +15,15 @@ public class KillerController : MonoBehaviour
     public GameObject explosionPrefab;
 
     private float startTime;
+    private Vector3 basePosition;
     private BoxCollider2D solidCollider;
     private BoxCollider2D triggerCollider;
 
     void Start()
     {
         startTime = Time.time;
-        transform.position = new Vector3(spawnX, groundY + 1.5f, 0);
+        basePosition = new Vector3(spawnX, groundY + 1.5f, 0);
+        transform.position = basePosition;
         transform.localScale = new Vector3(1f, 8f, 1f);
 
         solidCollider = gameObject.AddComponent<BoxCollider2D>();
@@ -39,8 +41,9 @@ public class KillerController : MonoBehaviour
 
     void Update()
     {
+        // Oscillate around the fixed base position
         float offset = Mathf.Sin((Time.time - startTime) * oscillationSpeed) * oscillationAmplitude;
-        transform.position = new Vector3(spawnX + offset, groundY + 1.5f, 0);
+        transform.position = basePosition + new Vector3(offset, 0, 0);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -55,7 +58,6 @@ public class KillerController : MonoBehaviour
                 Vector2 bounce = new Vector2(0f, pc.shieldBounceForce * 2f);
                 prb.linearVelocity = Vector2.zero;
                 prb.AddForce(bounce, ForceMode2D.Impulse);
-
                 pc.hasShield = false;
                 Debug.Log("Shield absorbed the hit! Player bounced!");
             }
@@ -63,7 +65,6 @@ public class KillerController : MonoBehaviour
             {
                 Debug.Log("Game Over! Player touched the killer!");
 
-                // Set health bar to zero
                 if (pc != null && pc.healthBar != null)
                     pc.healthBar.SetHealth(0f);
 
@@ -81,7 +82,7 @@ public class KillerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Obstacle") || other.CompareTag("Spike") )
+        if (other.CompareTag("Obstacle") || other.CompareTag("Spike"))
         {
             if (explosionPrefab != null)
             {
@@ -92,4 +93,3 @@ public class KillerController : MonoBehaviour
         }
     }
 }
-
