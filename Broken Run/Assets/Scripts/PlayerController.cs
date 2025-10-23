@@ -258,6 +258,7 @@ public class PlayerController : MonoBehaviour
 #endif
 
             FindObjectOfType<SurvivalAnalytics>()?.OnPlayerDeath();
+            FindObjectOfType<SurvivalTimer>()?.StopTimer();
             
             Time.timeScale = 0f;
         }

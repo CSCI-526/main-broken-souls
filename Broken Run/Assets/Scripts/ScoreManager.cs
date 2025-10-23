@@ -19,14 +19,31 @@ public class ScoreManager : MonoBehaviour
         Instance = this;
     }
 
+
     void Start()
     {
-        // Reset score when scene starts
-        score = 0f;
-        isGameOver = false;
-        if (scoreText != null)
-            scoreText.text = "Score: 0";
+    StartGame();
     }
+    public void StartGame()
+{
+    // Reset score
+    score = 0f;
+    isGameOver = false;
+    if (scoreText != null)
+        scoreText.text = "Score: 0";
+
+    // Reset and start survival timer
+    SurvivalTimer timer = FindObjectOfType<SurvivalTimer>();
+    if (timer != null)
+    {
+        timer.ResetTimer();
+        timer.StartTimer();
+    }
+
+    // Make sure timeScale is normal
+    Time.timeScale = 1f;
+}
+
 
     void Update()
     {
@@ -40,6 +57,11 @@ public class ScoreManager : MonoBehaviour
     public void GameOver()
     {
         isGameOver = true;
+        SurvivalTimer timer = FindObjectOfType<SurvivalTimer>();
+        if(timer != null)
+        {
+            timer.StopTimer();
+        }
 
         int finalScore = GetFinalScore();
         SaveScore(finalScore);

@@ -108,15 +108,16 @@ public class PauseManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(null);
     }
 
-    public void RestartScene()
-    {
-        // Always unpause before reloading
-        Time.timeScale = 1f;
-        if (pauseAudioListener) AudioListener.pause = false;
+  
 
-        var scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
-    }
+public void RestartScene()
+{
+    Time.timeScale = 1f;
+    if (pauseAudioListener) AudioListener.pause = false;
+
+    var scene = SceneManager.GetActiveScene();
+    SceneManager.LoadScene(scene.name);
+}
 
     public void QuitGame()
 {
