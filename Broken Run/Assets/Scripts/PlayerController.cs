@@ -255,8 +255,10 @@ public class PlayerController : MonoBehaviour
             FindFirstObjectByType<GameOverUI>().ShowGameOver();
             #else
             FindObjectOfType<GameOverUI>().ShowGameOver();
-            #endif
+#endif
 
+            FindObjectOfType<SurvivalAnalytics>()?.OnPlayerDeath();
+            
             Time.timeScale = 0f;
         }
     }
