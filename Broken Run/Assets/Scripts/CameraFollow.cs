@@ -7,7 +7,7 @@ public class CameraFollow : MonoBehaviour
     public Transform killer;
 
     [Header("Camera Settings")]
-    public Vector3 offset = new Vector3(0f, 0f, -10f); // Default camera distance
+    public Vector3 offset = new Vector3(0f, 1.6f, -10f); // Default camera distance
 
     void Start()
     {
