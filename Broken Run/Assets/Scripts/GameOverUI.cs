@@ -44,7 +44,7 @@ public class GameOverUI : MonoBehaviour
         // Reset time scale BEFORE loading scene
         Time.timeScale = 1f;
         
-        // Use scene build index (more reliable than name)
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        // Load SampleScene (index 1 after StartMenu was added as index 0)
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 }
