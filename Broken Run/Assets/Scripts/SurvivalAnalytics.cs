@@ -4,22 +4,26 @@ using System.Collections;
 
 public class SurvivalAnalytics : MonoBehaviour
 {
-    private float startTime;
-    [SerializeField] private string googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScaIdSiw94tDtioOrK-ytHdhnDLSJliUxjI65wAp-3LmilrtA/FormResponse";
-    [SerializeField] private string entryID = "entry.408832640"; // Replace with your form’s entry ID
+    [SerializeField] private string googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScaIdSiw94tDtioOrK-ytHdhnDLSJliUxjI65wAp-3LmilrtA/formResponse";
+    [SerializeField] private string entryID = "entry.408832640";
+
+    public SurvivalTimer timer; // 👈 Drag your SurvivalTimer object here in the Inspector
 
     private string sessionID;
+
     void Start()
     {
-        // Start timer when the game begins
-        startTime = Time.time;
         sessionID = System.Guid.NewGuid().ToString();
+        if (timer != null)
+            timer.StartTimer(); // start when game begins
     }
 
     public void OnPlayerDeath()
     {
-        // Calculate survival time
-        float survivalTime = Time.time - startTime;
+        if (timer != null)
+            timer.StopTimer();
+
+        float survivalTime = timer != null ? timer.GetElapsedTime() : 0f; // use same timer
         Debug.Log("Player survived for " + survivalTime + " seconds");
         StartCoroutine(SendDataToGoogleForm(survivalTime));
     }
@@ -34,9 +38,9 @@ public class SurvivalAnalytics : MonoBehaviour
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log("Error sending analytics: " + www.error);
+                Debug.Log("❌ Error sending analytics: " + www.error);
             else
-                Debug.Log("Analytics sent successfully!");
+                Debug.Log("✅ Analytics sent successfully!");
         }
     }
 }

@@ -21,6 +21,10 @@ public class SurvivalTimer : MonoBehaviour
         }
     }
 
+    public float GetElapsedTime()
+{
+    return elapsedTime;
+}
     void DisplayTime(float time)
     {
         int minutes = Mathf.FloorToInt(time / 60);
