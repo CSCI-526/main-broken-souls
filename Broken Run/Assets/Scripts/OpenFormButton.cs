@@ -6,6 +6,7 @@ public class OpenFormButton : MonoBehaviour
 
     public void OpenGoogleForm()
     {
+        Debug.Log("Button clicked!");
         Application.OpenURL(googleFormURL);
     }
 }
