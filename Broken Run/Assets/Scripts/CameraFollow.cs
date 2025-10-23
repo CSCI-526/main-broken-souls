@@ -2,31 +2,30 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [Header("Target")]
+    [Header("Targets")]
     public Transform player;
+    public Transform killer;
 
     [Header("Camera Settings")]
-    public float smoothSpeed = 5f;
-    public Vector3 offset = new Vector3(3f, 0f, 0f); 
-    // positive X offset = player stays left, more space on right
-
-    private float fixedY;
-    private float fixedZ;
+    public Vector3 offset = new Vector3(0f, 0f, -10f); // Default camera distance
 
     void Start()
     {
-        fixedY = transform.position.y;
-        fixedZ = transform.position.z;
+        if (player == null || killer == null)
+        {
+            Debug.LogWarning("Player or Killer not assigned to CameraFollow!");
+            return;
+        }
+
+        // Find midpoint between player & killer
+        Vector3 midpoint = (player.position + killer.position) / 2f;
+
+        // Set camera position once so both are visible
+        transform.position = midpoint + offset;
     }
 
     void LateUpdate()
     {
-        if (player == null) return;
-
-        // Target position follows player, shifted ahead by offset
-        Vector3 targetPos = new Vector3(player.position.x + offset.x, fixedY, fixedZ);
-
-        // Smooth follow movement
-        transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
+        // Do nothing – camera stays fixed
     }
 }
