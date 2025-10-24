@@ -5613,6 +5613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1617732730}
   - component: {fileID: 1617732731}
+  - component: {fileID: 1617732732}
   m_Layer: 0
   m_Name: AnalyticsManager
   m_TagString: Untagged
@@ -5642,7 +5643,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617732728}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c83a81e6213f0b049af5bfcc024e985a, type: 3}
   m_Name: 
@@ -5651,6 +5652,26 @@ MonoBehaviour:
   sendToWeb: 1
   saveLocally: 1
   maxSessionsStored: 100
+--- !u!114 &1617732732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617732728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bda29f1f6af64809ac599e33060b5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoogleFormAnalytics
+  formId: 1FAIpQLSe8IUke34hVDUs84B7OKT_h_RWtPByexHq57b_gMG-hbPLcdA
+  sessionNumberEntry: entry.1631903133
+  sessionIdEntry: entry.1770764965
+  survivalTimeEntry: entry.1086299405
+  finalScoreEntry: entry.1639751312
+  gameSpeedEntry: entry.1435931860
+  timestampEntry: entry.2061413192
+  enableAnalytics: 1
 --- !u!1 &1653375344
 GameObject:
   m_ObjectHideFlags: 0
