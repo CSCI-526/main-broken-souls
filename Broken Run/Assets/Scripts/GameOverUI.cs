@@ -37,16 +37,49 @@ public class GameOverUI : MonoBehaviour
         for (int i = 0; i < topScores.Count; i++)
             leaderboard += $"{i + 1}. {topScores[i]}\n";
         leaderboardText.text = leaderboard;
+
+        // 📊 Send Analytics Data
+        SendAnalytics(finalScore);
+    }
+
+    private void SendAnalytics(int finalScore)
+    {
+        if (SurvivalAnalytics.Instance != null)
+        {
+            // Get current game speed from EndlessGround
+            float gameSpeed = 5f; // default
+#if UNITY_2022_2_OR_NEWER
+            EndlessGround ground = FindFirstObjectByType<EndlessGround>();
+#else
+            EndlessGround ground = FindObjectOfType<EndlessGround>();
+#endif
+            if (ground != null)
+            {
+                gameSpeed = ground.scrollSpeed;
+            }
+
+            // Send data to analytics
+            SurvivalAnalytics.Instance.OnPlayerDeath(finalScore, gameSpeed);
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ SurvivalAnalytics not found in scene!");
+        }
     }
 
     public void RestartGame()
-{
-    // Reset time scale BEFORE loading scene
-    Time.timeScale = 1f;
+    {
+        // Reset time scale BEFORE loading scene
+        Time.timeScale = 1f;
 
+        // Start new analytics session for next game
+        if (SurvivalAnalytics.Instance != null)
+        {
+            SurvivalAnalytics.Instance.StartNewSession();
+        }
 
-    // Reload scene
-    UnityEngine.SceneManagement.SceneManager.LoadScene(1);
-}
+        // Reload scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+    }
 
 }

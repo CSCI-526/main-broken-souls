@@ -251,14 +251,17 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("💀 Player died!");
             ScoreManager.Instance.GameOver();
+            
+            // Stop the survival timer
+            SurvivalTimer timer = FindObjectOfType<SurvivalTimer>();
+            if (timer != null) timer.StopTimer();
+            
+            // Show game over UI (which will trigger analytics automatically)
             #if UNITY_2022_2_OR_NEWER
             FindFirstObjectByType<GameOverUI>().ShowGameOver();
             #else
             FindObjectOfType<GameOverUI>().ShowGameOver();
-#endif
-
-            FindObjectOfType<SurvivalAnalytics>()?.OnPlayerDeath();
-            FindObjectOfType<SurvivalTimer>()?.StopTimer();
+            #endif
             
             Time.timeScale = 0f;
         }

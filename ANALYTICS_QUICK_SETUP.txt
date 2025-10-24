@@ -1,0 +1,182 @@
+═══════════════════════════════════════════════════════════
+   📊 ANALYTICS QUICK SETUP - 5 MINUTE GUIDE
+═══════════════════════════════════════════════════════════
+
+✅ STEP 1: Add Analytics to Scene (2 minutes)
+──────────────────────────────────────────────────────
+
+1. Open Unity
+2. Open your game scene: "SampleScene"
+3. Create new GameObject:
+   - Right-click in Hierarchy
+   - Create Empty
+   - Name it: "AnalyticsManager"
+
+4. Add SurvivalAnalytics script:
+   - Select AnalyticsManager
+   - In Inspector, click "Add Component"
+   - Search: "SurvivalAnalytics"
+   - Add it
+
+5. Configure settings:
+   ✅ Save Locally: CHECKED
+   ✅ Send To Web: CHECKED (if you want Google Sheets)
+   Max Sessions Stored: 100
+
+6. Add Data Exporter:
+   - With AnalyticsManager selected
+   - Add Component → "AnalyticsDataExporter"
+   - Leave default settings
+
+✅ STEP 2: Test It Works (1 minute)
+──────────────────────────────────────────────────────
+
+1. Press PLAY in Unity
+2. Play the game until you die
+3. Check the Console (Cmd+Shift+C)
+4. You should see:
+   "📊 Started Analytics Session #1"
+   "=== 📊 SESSION ANALYTICS ==="
+   "Session #1"
+   "Survival Time: XX.XXs"
+
+If you see this → ✅ IT'S WORKING!
+
+✅ STEP 3: Export Your First Data (1 minute)
+──────────────────────────────────────────────────────
+
+1. Play a few more games (3-5 deaths)
+2. While in Play mode, press: S
+3. Console shows detailed stats
+4. Press: E
+5. Console shows CSV file location
+6. Copy the path and open the CSV file
+
+✅ STEP 4: View Statistics (1 minute)
+──────────────────────────────────────────────────────
+
+Press S anytime to see:
+- Total sessions
+- Average survival time
+- Min/Max survival time
+- Trend analysis (improving/declining)
+
+═══════════════════════════════════════════════════════════
+   🎮 HOW TO USE DURING GAMEPLAY
+═══════════════════════════════════════════════════════════
+
+KEYBOARD SHORTCUTS:
+- E = Export data to CSV
+- S = Show statistics in Console
+- Shift+C = Clear all data (be careful!)
+- F1 = Toggle debug UI (if set up)
+
+WHAT HAPPENS AUTOMATICALLY:
+✅ Game starts → Analytics starts tracking
+✅ Player dies → Data saved automatically
+✅ Game restarts → New session begins
+✅ Console shows stats after each death
+
+═══════════════════════════════════════════════════════════
+   📈 CREATING GRAPHS FOR YOUR METRIC
+═══════════════════════════════════════════════════════════
+
+OPTION 1: Google Sheets (Easiest)
+──────────────────────────────────────────────────────
+1. Press E to export CSV
+2. Open the CSV file
+3. Copy all data
+4. Paste into Google Sheets
+5. Select columns B and C (Session Number & Survival Time)
+6. Insert → Chart → Line Chart
+7. Done! ✅
+
+OPTION 2: Excel
+──────────────────────────────────────────────────────
+1. Press E to export CSV
+2. Open in Excel
+3. Select data
+4. Insert → Line Chart
+5. X-axis: Session Number
+6. Y-axis: Survival Time
+
+═══════════════════════════════════════════════════════════
+   🧪 TESTING YOUR HYPOTHESIS
+═══════════════════════════════════════════════════════════
+
+Hypothesis: Slowing speed increase by 10% will increase
+            average survival time by at least 15%
+
+STEP 1: Collect Baseline Data
+───────────────────────────────
+- Play 10-20 games normally
+- Press S to see average survival time
+- Write down the number (e.g., 45.2 seconds)
+- Press E and save the CSV as "baseline.csv"
+
+STEP 2: Modify Game Speed
+───────────────────────────────
+- Open EndlessGround.cs
+- Find the speed increase rate
+- Reduce it by 10%
+- Save the file
+
+STEP 3: Clear Old Data
+───────────────────────────────
+- Press Shift+C to clear data
+- Confirm in Console
+
+STEP 4: Collect New Data
+───────────────────────────────
+- Play 10-20 games with new settings
+- Press S to see new average
+- Press E and save as "test.csv"
+
+STEP 5: Calculate Result
+───────────────────────────────
+Improvement = ((New Avg - Old Avg) / Old Avg) × 100%
+
+Example:
+Old Avg = 45.2s
+New Avg = 52.8s
+Improvement = ((52.8 - 45.2) / 45.2) × 100% = 16.8%
+
+Result: 16.8% ≥ 15% → HYPOTHESIS CONFIRMED! ✅
+
+═══════════════════════════════════════════════════════════
+   ⚠️ TROUBLESHOOTING
+═══════════════════════════════════════════════════════════
+
+Problem: "Analytics Not Available"
+Solution: Make sure AnalyticsManager GameObject is in scene
+
+Problem: No data being saved
+Solution: Check "Save Locally" is enabled in Inspector
+
+Problem: Can't find CSV file
+Solution: Press S - the file path is shown in Console
+
+Problem: Console shows errors
+Solution: Make sure all scripts compiled without errors
+
+═══════════════════════════════════════════════════════════
+   ✅ CHECKLIST - Make Sure Everything Works
+═══════════════════════════════════════════════════════════
+
+[ ] AnalyticsManager GameObject exists in SampleScene
+[ ] SurvivalAnalytics component is attached
+[ ] AnalyticsDataExporter component is attached
+[ ] "Save Locally" is checked in Inspector
+[ ] Played a test game until death
+[ ] Console shows "Session Analytics" message
+[ ] Pressed S and saw statistics
+[ ] Pressed E and CSV file was created
+[ ] Can open the CSV file and see data
+[ ] Session numbers are incrementing
+
+If all checked → YOU'RE READY TO COLLECT DATA! 🎉
+
+═══════════════════════════════════════════════════════════
+
+Questions? Check ANALYTICS_GUIDE.md for detailed information
+

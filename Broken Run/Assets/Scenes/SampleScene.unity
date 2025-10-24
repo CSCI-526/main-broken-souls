@@ -5612,7 +5612,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1617732730}
-  - component: {fileID: 1617732729}
+  - component: {fileID: 1617732731}
   m_Layer: 0
   m_Name: AnalyticsManager
   m_TagString: Untagged
@@ -5620,21 +5620,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1617732729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1617732728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c83a81e6213f0b049af5bfcc024e985a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SurvivalAnalytics
-  googleFormURL: 'https://docs.google.com/forms/d/e/1FAIpQLScaIdSiw94tDtioOrK-ytHdhnDLSJliUxjI65wAp-3LmilrtA/formResponse '
-  entryID: entry.408832640
-  timer: {fileID: 2007855287}
 --- !u!4 &1617732730
 Transform:
   m_ObjectHideFlags: 0
@@ -5650,6 +5635,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1617732731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617732728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c83a81e6213f0b049af5bfcc024e985a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalAnalytics
+  webAppUrl: https://script.google.com/macros/s/AKfycbwSi0ICVZwc79JMHfTc8k8WctLNxV5-BY_SGGKms9xtkVtbbQlP5luMfN-QYqDFGs9r/exec
+  sendToWeb: 1
+  saveLocally: 1
+  maxSessionsStored: 100
 --- !u!1 &1653375344
 GameObject:
   m_ObjectHideFlags: 0
