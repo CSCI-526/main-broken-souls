@@ -7,7 +7,7 @@ public class SurvivalAnalytics : MonoBehaviour
     private float startTime;
     private string sessionID;
 
-    [SerializeField] private string webAppUrl = "https://script.google.com/macros/s/AKfycbzUn-eRnyfdKoBG5Q1HY0STVPLPBQorJumFDXqErTekoK9BHzhJRaeb3CI0fJjzIOo8Dw/exec";
+    [SerializeField] private string webAppUrl = "https://script.google.com/macros/s/AKfycbw5n1We66KZHv_-8A9p4WWqjeZytsK7wyQ9U1fJa0lwZy45rARRx_iAA7fX1Ckduz5Nzw/exec";
 
     void Start()
     {
