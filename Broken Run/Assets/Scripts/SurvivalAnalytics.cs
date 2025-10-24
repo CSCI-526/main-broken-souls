@@ -4,41 +4,45 @@ using System.Collections;
 
 public class SurvivalAnalytics : MonoBehaviour
 {
-    [SerializeField] private string googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScaIdSiw94tDtioOrK-ytHdhnDLSJliUxjI65wAp-3LmilrtA/formResponse";
-    [SerializeField] private string entryID = "entry.408832640";
-
-    public SurvivalTimer timer; // 👈 Drag your SurvivalTimer object here in the Inspector
-
+    private float startTime;
     private string sessionID;
+
+    [SerializeField] private string googleAppScriptURL = "https://script.google.com/macros/s/AKfycbxZ2AAW2GDeOBv4yG774AJAljz2qhlvNRqEgIVHu9nrh4BRinhoAnz1YuTrotsUldMW/exec ";
 
     void Start()
     {
+        startTime = Time.time;
         sessionID = System.Guid.NewGuid().ToString();
-        if (timer != null)
-            timer.StartTimer(); // start when game begins
     }
 
     public void OnPlayerDeath()
     {
-        if (timer != null)
-            timer.StopTimer();
-
-        float survivalTime = timer != null ? timer.GetElapsedTime() : 0f; // use same timer
-        Debug.Log("Player survived for " + survivalTime + " seconds");
-        StartCoroutine(SendDataToGoogleForm(survivalTime));
+        float survivalTime = Time.time - startTime;
+        Debug.Log($"Player survived for {survivalTime:F2} seconds");
+        StartCoroutine(SendDataToGoogleSheet(survivalTime));
     }
 
-    IEnumerator SendDataToGoogleForm(float survivalTime)
+    IEnumerator SendDataToGoogleSheet(float survivalTime)
     {
-        WWWForm form = new WWWForm();
-        form.AddField(entryID, survivalTime.ToString("F2"));
-
-        using (UnityWebRequest www = UnityWebRequest.Post(googleFormURL, form))
+        var data = new
         {
+            sessionID = sessionID,
+            survivalTime = survivalTime.ToString("F2")
+        };
+
+        string jsonData = JsonUtility.ToJson(data);
+
+        using (UnityWebRequest www = new UnityWebRequest(googleAppScriptURL, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log("❌ Error sending analytics: " + www.error);
+                Debug.LogError($"Error sending analytics: {www.error}");
             else
                 Debug.Log("✅ Analytics sent successfully!");
         }
