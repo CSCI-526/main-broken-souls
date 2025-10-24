@@ -44,26 +44,32 @@ public class GameOverUI : MonoBehaviour
 
     private void SendAnalytics(int finalScore)
     {
-        if (SurvivalAnalytics.Instance != null)
-        {
-            // Get current game speed from EndlessGround
-            float gameSpeed = 5f; // default
+        // Get current game speed from EndlessGround
+        float gameSpeed = 5f; // default
 #if UNITY_2022_2_OR_NEWER
-            EndlessGround ground = FindFirstObjectByType<EndlessGround>();
+        EndlessGround ground = FindFirstObjectByType<EndlessGround>();
 #else
-            EndlessGround ground = FindObjectOfType<EndlessGround>();
+        EndlessGround ground = FindObjectOfType<EndlessGround>();
 #endif
-            if (ground != null)
-            {
-                gameSpeed = ground.scrollSpeed;
-            }
+        if (ground != null)
+        {
+            gameSpeed = ground.scrollSpeed;
+        }
 
-            // Send data to analytics
+        // Try Google Forms analytics (CORS-friendly)
+        GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
+        if (formAnalytics != null)
+        {
+            formAnalytics.OnPlayerDeath(finalScore, gameSpeed);
+        }
+        // Fallback to regular analytics
+        else if (SurvivalAnalytics.Instance != null)
+        {
             SurvivalAnalytics.Instance.OnPlayerDeath(finalScore, gameSpeed);
         }
         else
         {
-            Debug.LogWarning("⚠️ SurvivalAnalytics not found in scene!");
+            Debug.LogWarning("⚠️ No analytics system found in scene!");
         }
     }
 
@@ -73,7 +79,12 @@ public class GameOverUI : MonoBehaviour
         Time.timeScale = 1f;
 
         // Start new analytics session for next game
-        if (SurvivalAnalytics.Instance != null)
+        GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
+        if (formAnalytics != null)
+        {
+            formAnalytics.StartNewSession();
+        }
+        else if (SurvivalAnalytics.Instance != null)
         {
             SurvivalAnalytics.Instance.StartNewSession();
         }
