@@ -7,7 +7,7 @@ public class SurvivalAnalytics : MonoBehaviour
     private float startTime;
     private string sessionID;
 
-    [SerializeField] private string googleAppScriptURL = "https://script.google.com/macros/s/AKfycbxZ2AAW2GDeOBv4yG774AJAljz2qhlvNRqEgIVHu9nrh4BRinhoAnz1YuTrotsUldMW/exec ";
+    [SerializeField] private string webAppUrl = "https://script.google.com/macros/s/AKfycbzUn-eRnyfdKoBG5Q1HY0STVPLPBQorJumFDXqErTekoK9BHzhJRaeb3CI0fJjzIOo8Dw/exec";
 
     void Start()
     {
@@ -19,10 +19,10 @@ public class SurvivalAnalytics : MonoBehaviour
     {
         float survivalTime = Time.time - startTime;
         Debug.Log($"Player survived for {survivalTime:F2} seconds");
-        StartCoroutine(SendDataToGoogleSheet(survivalTime));
+        StartCoroutine(SendData(survivalTime));
     }
 
-    IEnumerator SendDataToGoogleSheet(float survivalTime)
+    IEnumerator SendData(float survivalTime)
     {
         var data = new
         {
@@ -30,21 +30,21 @@ public class SurvivalAnalytics : MonoBehaviour
             survivalTime = survivalTime.ToString("F2")
         };
 
-        string jsonData = JsonUtility.ToJson(data);
+        string json = JsonUtility.ToJson(data);
 
-        using (UnityWebRequest www = new UnityWebRequest(googleAppScriptURL, "POST"))
+        using (UnityWebRequest www = new UnityWebRequest(webAppUrl, "POST"))
         {
-            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
             www.uploadHandler = new UploadHandlerRaw(bodyRaw);
             www.downloadHandler = new DownloadHandlerBuffer();
             www.SetRequestHeader("Content-Type", "application/json");
 
             yield return www.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.LogError($"Error sending analytics: {www.error}");
-            else
+            if (www.result == UnityWebRequest.Result.Success)
                 Debug.Log("✅ Analytics sent successfully!");
+            else
+                Debug.LogError("❌ Error sending analytics: " + www.error);
         }
     }
 }
