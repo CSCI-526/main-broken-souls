@@ -183,7 +183,9 @@ MonoBehaviour:
     coming\u2026 RUN, sprint, escape!\n\nCalm? Who said that? Time your moves perfectly
     or face the consequences!\n\nFail? Laugh it off! Each mistake makes you deadlier!\n\nToo
     close to the Killer? Big mistake\u2026 keep your distance!\n\nShield ready? Use
-    it wisely\u2014it\u2019s your one-time magical armor!"
+    it wisely\u2014it\u2019s your one-time magical armor!\n\nBonus Tip! You start
+    with a Magic Shield already equipped\u2014your instant lifesaver at the beginning.
+    Use it to dodge early danger and gain the upper hand!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
