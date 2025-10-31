@@ -126,10 +126,11 @@ public class ObstacleSpawner : MonoBehaviour
     public float airOffset = 2.5f;      // How high above ground for air obstacles
     public float airSpawnChance = 0.4f; // Chance to spawn in air instead of ground
 
-    [Header("Shield UI")]
-    public GameObject shieldTipPanel;
-    public float shieldTipDuration = 2.5f;
-    public float shieldTipDelay = 1f;
+    // deleted
+    // [Header("Shield UI")]
+    // public GameObject shieldTipPanel;
+    // public float shieldTipDuration = 2.5f;
+    // public float shieldTipDelay = 1f;
 
     private float timer;
 
@@ -197,8 +198,8 @@ public class ObstacleSpawner : MonoBehaviour
         if (isShield)
         {
             spawnPos = new Vector3(spawnX, player.position.y + Random.Range(-0.5f, 0.5f), 0);
-            StartCoroutine(DelayShieldTip());
-            ShowShieldTip();
+            // StartCoroutine(DelayShieldTip()); //delete
+            // ShowShieldTip();
             
         }
         else if (spawnAir)
@@ -242,25 +243,26 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
-    private void ShowShieldTip()
-    {
-        if (shieldTipPanel != null)
-        {
-            shieldTipPanel.SetActive(true);
-            StartCoroutine(HideShieldTipAfterDelay());
-        }
-    }
+    // deleted
+    // private void ShowShieldTip()
+    // {
+    //     if (shieldTipPanel != null)
+    //     {
+    //         shieldTipPanel.SetActive(true);
+    //         StartCoroutine(HideShieldTipAfterDelay());
+    //     }
+    // }
 
-    private IEnumerator HideShieldTipAfterDelay()
-    {
-        yield return new WaitForSeconds(shieldTipDuration);
-        if (shieldTipPanel != null)
-        {
-            shieldTipPanel.SetActive(false);
-        }
-    }
+    // private IEnumerator HideShieldTipAfterDelay()
+    // {
+    //     yield return new WaitForSeconds(shieldTipDuration);
+    //     if (shieldTipPanel != null)
+    //     {
+    //         shieldTipPanel.SetActive(false);
+    //     }
+    // }
 
-    private IEnumerator DelayShieldTip(){
-        yield return new WaitForSeconds(shieldTipDelay);
-    }
+    // private IEnumerator DelayShieldTip(){
+    //     yield return new WaitForSeconds(shieldTipDelay);
+    // }
 }

@@ -11,8 +11,7 @@ public class GameOverUI : MonoBehaviour
 
     [Header("Other UI")]
     public ModeUIController modeUI;   // <-- assign in Inspector
-    // new
-    public GameObject shieldTipUI;
+    // public GameObject shieldTipUI; // deleted
     void Start()
     {
         gameOverPanel.SetActive(false);
@@ -23,7 +22,7 @@ public class GameOverUI : MonoBehaviour
         // 1) fade out the �Back to normal in �� timers / banners
         if (modeUI != null) modeUI.HideAllWithFade(0.25f);
         // new
-        if (shieldTipUI != null) shieldTipUI.SetActive(false);
+        //if (shieldTipUI != null) shieldTipUI.SetActive(false);// deleted
 
         // 2) now show the game-over UI
         gameOverPanel.SetActive(true);
