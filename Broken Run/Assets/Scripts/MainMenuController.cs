@@ -7,11 +7,13 @@ public class MainMenuController : MonoBehaviour
 {
     [Header("Panels")]
     public GameObject instructionsPanel;
+    public GameObject tipsPanel;
     public GameObject mainMenuPanel;
     
     [Header("UI Elements")]
     public CanvasGroup mainMenuCanvasGroup;
     public CanvasGroup instructionsCanvasGroup;
+    public CanvasGroup tipsCanvasGroup;
     public Transform titleTransform;
     public Button[] menuButtons;
     
@@ -28,6 +30,9 @@ public class MainMenuController : MonoBehaviour
         
         if (instructionsCanvasGroup == null && instructionsPanel != null)
             instructionsCanvasGroup = instructionsPanel.GetComponent<CanvasGroup>() ?? instructionsPanel.AddComponent<CanvasGroup>();
+        
+        if (tipsCanvasGroup == null && tipsPanel != null)
+            tipsCanvasGroup = tipsPanel.GetComponent<CanvasGroup>() ?? tipsPanel.AddComponent<CanvasGroup>();
 
         // Start with fade-in animation
         StartCoroutine(FadeInMainMenu());
@@ -63,12 +68,13 @@ public class MainMenuController : MonoBehaviour
         {
             if (button == null) continue;
             
-            // Add hover animation script to each button
             var hoverEffect = button.gameObject.AddComponent<ButtonHoverEffect>();
             hoverEffect.hoverScale = buttonHoverScale;
             hoverEffect.animSpeed = buttonAnimSpeed;
         }
     }
+
+    // -------------------- MAIN MENU ACTIONS --------------------
 
     public void PlayGame()
     {
@@ -80,7 +86,17 @@ public class MainMenuController : MonoBehaviour
         StartCoroutine(TransitionToInstructions());
     }
 
+    public void ShowTips()
+    {
+        StartCoroutine(TransitionToTips());
+    }
+
     public void HideInstructions()
+    {
+        StartCoroutine(TransitionToMainMenu());
+    }
+
+    public void HideTips()
     {
         StartCoroutine(TransitionToMainMenu());
     }
@@ -90,75 +106,76 @@ public class MainMenuController : MonoBehaviour
         StartCoroutine(FadeOutAndQuit());
     }
 
+    // -------------------- TRANSITIONS --------------------
+
     private IEnumerator TransitionToInstructions()
     {
         // Fade out main menu
-        if (mainMenuCanvasGroup != null)
-        {
-            float elapsed = 0f;
-            while (elapsed < 1f)
-            {
-                elapsed += Time.deltaTime * fadeSpeed;
-                mainMenuCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed);
-                yield return null;
-            }
-            mainMenuPanel.SetActive(false);
-        }
-        else
-        {
-            mainMenuPanel.SetActive(false);
-        }
-
+        yield return StartCoroutine(FadeOutPanel(mainMenuCanvasGroup, mainMenuPanel));
+        
         // Fade in instructions
         instructionsPanel.SetActive(true);
-        if (instructionsCanvasGroup != null)
-        {
-            instructionsCanvasGroup.alpha = 0f;
-            float elapsed = 0f;
-            while (elapsed < 1f)
-            {
-                elapsed += Time.deltaTime * fadeSpeed;
-                instructionsCanvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed);
-                yield return null;
-            }
-            instructionsCanvasGroup.alpha = 1f;
-        }
+        yield return StartCoroutine(FadeInPanel(instructionsCanvasGroup));
+    }
+
+    private IEnumerator TransitionToTips()
+    {
+        // Fade out main menu
+        yield return StartCoroutine(FadeOutPanel(mainMenuCanvasGroup, mainMenuPanel));
+
+        // Fade in tips
+        tipsPanel.SetActive(true);
+        yield return StartCoroutine(FadeInPanel(tipsCanvasGroup));
     }
 
     private IEnumerator TransitionToMainMenu()
     {
-        // Fade out instructions
-        if (instructionsCanvasGroup != null)
-        {
-            float elapsed = 0f;
-            while (elapsed < 1f)
-            {
-                elapsed += Time.deltaTime * fadeSpeed;
-                instructionsCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed);
-                yield return null;
-            }
-            instructionsPanel.SetActive(false);
-        }
-        else
-        {
-            instructionsPanel.SetActive(false);
-        }
+        // Fade out instructions or tips
+        if (instructionsPanel.activeSelf)
+            yield return StartCoroutine(FadeOutPanel(instructionsCanvasGroup, instructionsPanel));
+        if (tipsPanel.activeSelf)
+            yield return StartCoroutine(FadeOutPanel(tipsCanvasGroup, tipsPanel));
 
         // Fade in main menu
         mainMenuPanel.SetActive(true);
-        if (mainMenuCanvasGroup != null)
+        yield return StartCoroutine(FadeInPanel(mainMenuCanvasGroup));
+    }
+
+    // -------------------- GENERIC FADE HELPERS --------------------
+
+    private IEnumerator FadeOutPanel(CanvasGroup canvasGroup, GameObject panel)
+    {
+        if (canvasGroup != null)
         {
-            mainMenuCanvasGroup.alpha = 0f;
             float elapsed = 0f;
             while (elapsed < 1f)
             {
                 elapsed += Time.deltaTime * fadeSpeed;
-                mainMenuCanvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed);
+                canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed);
                 yield return null;
             }
-            mainMenuCanvasGroup.alpha = 1f;
+            canvasGroup.alpha = 0f;
+        }
+        panel.SetActive(false);
+    }
+
+    private IEnumerator FadeInPanel(CanvasGroup canvasGroup)
+    {
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            float elapsed = 0f;
+            while (elapsed < 1f)
+            {
+                elapsed += Time.deltaTime * fadeSpeed;
+                canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed);
+                yield return null;
+            }
+            canvasGroup.alpha = 1f;
         }
     }
+
+    // -------------------- SCENE / EXIT --------------------
 
     private IEnumerator FadeOutAndLoadScene(string sceneName)
     {
@@ -172,7 +189,6 @@ public class MainMenuController : MonoBehaviour
                 yield return null;
             }
         }
-        
         SceneManager.LoadScene(sceneName);
     }
 
@@ -188,10 +204,10 @@ public class MainMenuController : MonoBehaviour
                 yield return null;
             }
         }
-        
+
         Application.Quit();
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
     }
 }
