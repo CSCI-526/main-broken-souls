@@ -3,7 +3,7 @@ using UnityEngine;
 public class Collectible : MonoBehaviour
 {
     [Header("Collectible Settings")]
-    public int scoreValue = 50;
+    public int scoreValue = 50; // no longer used for adding score
     public GameObject collectEffect;   // optional VFX prefab
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -14,13 +14,12 @@ public class Collectible : MonoBehaviour
         if (collectEffect != null)
             Instantiate(collectEffect, transform.position, Quaternion.identity);
 
-        // Add score
-        ScoreManager.Instance.AddScore(scoreValue);
 
-        // Show floating "+XX" popup at the coin position
-        FloatingTextSpawner.I?.Show($"+{scoreValue}", transform.position);
 
-        Debug.Log("Collected! +" + scoreValue);
+        // ✅ Show floating "+1" popup at the coin position
+        FloatingTextSpawner.I?.Show("+1", transform.position);
+
+        Debug.Log("Collected! +1");
 
         // Remove coin
         Destroy(gameObject);
