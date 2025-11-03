@@ -9,8 +9,7 @@ public class ShieldPickup : MonoBehaviour
             var player = other.GetComponent<PlayerController>();
             if (player != null)
             {
-                player.hasShield = true;
-                Debug.Log("Player picked up a shield!");
+                player.ActivateShield(); // ✅ Use method instead of hasShield=true
             }
             Destroy(gameObject);
         }

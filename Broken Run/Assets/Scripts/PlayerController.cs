@@ -37,7 +37,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasShield = false;
+    public float shieldDuration = 10f;
     public float shieldBounceForce = 6f;
+
 
     [Header("UI")]
     public HealthBar healthBar;
@@ -56,10 +58,14 @@ public class PlayerController : MonoBehaviour
     [Header("UI image")]
     public Image image;
 
+    [Header("Shield Visual")]
+    public GameObject shieldVisual;
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool isGrounded = false;
     private bool isCrouching = false;
+
+    private Coroutine shieldRoutine;
 
     private bool controlsFlipped = false;
     private bool gravityFlipped = false;
@@ -83,6 +89,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+
+        sr = GetComponent<SpriteRenderer>();
+        normalColor = sr.color;
         moveSpeed = baseMoveSpeed;
         jumpForce = baseJumpForce;
 
@@ -294,6 +303,74 @@ public class PlayerController : MonoBehaviour
         else
             sr.color = normalColor;     // no flip
     }
+}
+
+public void ActivateShield()
+{
+    // If shield is already active, extend duration by 10s
+    if (hasShield && shieldRoutine != null)
+    {
+        remainingShieldTime += 10f;
+        Debug.Log($"🛡 Shield extended by 10s! Remaining: {remainingShieldTime:F1}s");
+        return;
+    }
+
+    // Otherwise, activate a new shield
+    hasShield = true;
+    remainingShieldTime = shieldDuration;
+
+    Debug.Log("🛡 Shield activated!");
+
+    if (shieldVisual != null)
+        shieldVisual.SetActive(true);
+
+    shieldRoutine = StartCoroutine(ShieldTimer());
+}
+
+private float remainingShieldTime;
+
+private IEnumerator ShieldTimer()
+{
+    float blinkStart = 2f;
+    bool blink = false;
+
+    while (remainingShieldTime > 0f)
+    {
+        // Optional blink during last 2 seconds
+        if (remainingShieldTime <= blinkStart && shieldVisual != null)
+        {
+            blink = !blink;
+            shieldVisual.SetActive(blink);
+        }
+
+        remainingShieldTime -= 0.25f;
+        yield return new WaitForSeconds(0.25f);
+    }
+
+    hasShield = false;
+    shieldRoutine = null;
+    Debug.Log("🕒 Shield expired");
+
+    if (shieldVisual != null)
+        shieldVisual.SetActive(false);
+}
+
+public void DeactivateShield()
+{
+    hasShield = false;
+
+    if (shieldRoutine != null)
+    {
+        StopCoroutine(shieldRoutine);
+        shieldRoutine = null;
+    }
+
+    remainingShieldTime = 0f;
+
+    if (shieldVisual != null)
+        shieldVisual.SetActive(false);
+
+    Debug.Log("🧊 Shield deactivated manually!");
 }
 
 

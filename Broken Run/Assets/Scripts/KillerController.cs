@@ -56,7 +56,7 @@ public class KillerController : MonoBehaviour
                 prb.linearVelocity = Vector2.zero;
                 prb.AddForce(bounce, ForceMode2D.Impulse);
 
-                pc.hasShield = false;
+                pc.DeactivateShield();
                 Debug.Log("Shield absorbed the hit! Player bounced!");
             }
             else
