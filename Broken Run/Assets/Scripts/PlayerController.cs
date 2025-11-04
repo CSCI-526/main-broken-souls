@@ -65,6 +65,11 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded = false;
     private bool isCrouching = false;
 
+    [Header("Slow Motion Power-Up")]
+    public bool isSlowMoActive = false;
+    public float slowMoScale = 0.5f;      // how much slower the world runs (0.5 = half speed)
+    public float slowMoDuration = 10f;  
+
     private Coroutine shieldRoutine;
 
     private bool controlsFlipped = false;
@@ -372,6 +377,32 @@ public void DeactivateShield()
 
     Debug.Log("🧊 Shield deactivated manually!");
 }
+public void ActivateSlowMotion()
+{
+    if (isSlowMoActive) return; // prevent overlapping effects
+    StartCoroutine(SlowMotionRoutine());
+}
+
+private IEnumerator SlowMotionRoutine()
+{
+    isSlowMoActive = true;
+
+    // Slow down everything in the game
+    Time.timeScale = slowMoScale;
+    Time.fixedDeltaTime = 0.02f * Time.timeScale; // keep physics stable
+
+    Debug.Log("🌀 Slow Motion Activated!");
+
+    // Wait 10 seconds in *real* time
+    yield return new WaitForSecondsRealtime(slowMoDuration);
+
+    // Restore normal time
+    Time.timeScale = 1f;
+    Time.fixedDeltaTime = 0.02f;
+    isSlowMoActive = false;
+
+    Debug.Log("⏱️ Slow Motion Ended!");
+}
 
 
     private void OnDrawGizmos()
@@ -393,4 +424,13 @@ public void DeactivateShield()
     {
         return gravityFlipped;
     }
+    private void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.CompareTag("SlowMoPowerUp"))
+    {
+        ActivateSlowMotion();
+        Destroy(other.gameObject); // remove power-up after use
+    }
+}
+
 }

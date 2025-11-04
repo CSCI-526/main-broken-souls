@@ -9,6 +9,7 @@ TagManager:
   - Obstacle
   - PowerUp
   - Spike
+  - SlowMoPowerUp
   layers:
   - Default
   - TransparentFX
