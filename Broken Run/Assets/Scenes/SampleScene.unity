@@ -5170,7 +5170,7 @@ MonoBehaviour:
   normalColor: {r: 0.8509804, g: 0.47058824, b: 0.23529412, a: 1}
   flippedColor: {r: 0.77254903, g: 0.14117648, b: 0.7607843, a: 1}
   gravityFlippedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  hasShield: 1
+  hasShield: 0
   shieldDuration: 10
   shieldBounceForce: 6
   healthBar: {fileID: 1837687999}
@@ -5181,7 +5181,7 @@ MonoBehaviour:
   minEffectDuration: 10
   maxEffectDuration: 15
   image: {fileID: 1476514044}
-  shieldVisual: {fileID: 0}
+  shieldVisual: {fileID: 591615900}
 --- !u!114 &1256906669
 MonoBehaviour:
   m_ObjectHideFlags: 0
