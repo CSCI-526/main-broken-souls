@@ -2,118 +2,131 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 
+/// <summary>
+/// Owns the live score, updates a TMP label, and exposes the value to other systems.
+/// </summary>
 public class ScoreManager : MonoBehaviour
 {
     [Header("UI Reference")]
-    public TextMeshProUGUI scoreText;   
-    public static ScoreManager Instance; 
+    public TextMeshProUGUI scoreText;
+
+    /// <summary> Simple per-scene singleton. </summary>
+    public static ScoreManager Instance { get; private set; }
 
     [Header("Score Settings")]
-    public float scoreRate = 10f; 
+    [Tooltip("Points gained per second while the game is running.")]
+    public float scoreRate = 10f;
+
+    // Internal state
     private float score = 0f;
     private bool isGameOver = false;
 
-    void Awake()
+    /// <summary> Integer score other systems should read. </summary>
+    public int CurrentScore => Mathf.FloorToInt(score);
+
+    /// <summary> Whether scoring is paused due to game over. </summary>
+    public bool IsGameOver => isGameOver;
+
+    private void Awake()
     {
-        // Reset instance on scene reload to prevent blue screen issues
+        // Replace any previous instance on scene reloads.
         Instance = this;
     }
 
-
-    void Start()
+    private void Start()
     {
-    StartGame();
-    }
-    public void StartGame()
-{
-    // Reset score
-    score = 0f;
-    isGameOver = false;
-    if (scoreText != null)
-        scoreText.text = "Score: 0";
-
-    // Reset and start survival timer
-    SurvivalTimer timer = FindObjectOfType<SurvivalTimer>();
-    if (timer != null)
-    {
-        timer.ResetTimer();
-        timer.StartTimer();
+        StartGame();
     }
 
-    // Make sure timeScale is normal
-    Time.timeScale = 1f;
-}
-
-
-    void Update()
+    private void Update()
     {
         if (isGameOver) return;
 
+        // Passive score gain over time
         score += Time.deltaTime * scoreRate;
-        if (scoreText != null)
-            scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
+        UpdateScoreUI();
     }
 
-    public void GameOver()
+    // ---------------- Public API ----------------
+
+    /// <summary> Resets score & timers and resumes time. Call on scene start/restart. </summary>
+    public void StartGame()
     {
-        isGameOver = true;
-        SurvivalTimer timer = FindObjectOfType<SurvivalTimer>();
-        if(timer != null)
+        score = 0f;
+        isGameOver = false;
+        UpdateScoreUI();
+
+        // Reset and start survival timer if present
+#if UNITY_2023_1_OR_NEWER
+        var timer = Object.FindFirstObjectByType<SurvivalTimer>();
+#else
+        var timer = Object.FindObjectOfType<SurvivalTimer>();
+#endif
+        if (timer != null)
         {
-            timer.StopTimer();
+            timer.ResetTimer();
+            timer.StartTimer();
         }
 
-        int finalScore = GetFinalScore();
-        SaveScore(finalScore);
+        Time.timeScale = 1f;
     }
 
-    public int GetFinalScore()
-    {
-        return Mathf.FloorToInt(score);
-    }
-
-    
-    private void SaveScore(int newScore)
-    {
-        List<int> scores = new List<int>();
-
-        
-        for (int i = 0; i < 5; i++)
-        {
-            scores.Add(PlayerPrefs.GetInt("HighScore" + i, 0));
-        }
-
-        
-        scores.Add(newScore);
-
-        
-        scores.Sort((a, b) => b.CompareTo(a));
-
-        
-        for (int i = 0; i < 5; i++)
-        {
-            PlayerPrefs.SetInt("HighScore" + i, scores[i]);
-        }
-    }
-
-    
-    public List<int> GetTopScores()
-    {
-        List<int> topScores = new List<int>();
-        for (int i = 0; i < 5; i++)
-        {
-            topScores.Add(PlayerPrefs.GetInt("HighScore" + i, 0));
-        }
-        return topScores;
-    }
-
+    /// <summary> Adds a discrete amount to score (e.g., pickups, kills). </summary>
     public void AddScore(int amount)
     {
         if (isGameOver) return;
 
-        score += amount;
-        if (scoreText != null)
-            scoreText.text = $"Score: {Mathf.FloorToInt(score)}";
+        score += Mathf.Max(0, amount);
+        UpdateScoreUI();
     }
 
+    /// <summary> Freezes passive scoring, stops timers, saves highscores. </summary>
+    public void GameOver()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+
+#if UNITY_2023_1_OR_NEWER
+        var timer = Object.FindFirstObjectByType<SurvivalTimer>();
+#else
+        var timer = Object.FindObjectOfType<SurvivalTimer>();
+#endif
+        if (timer != null) timer.StopTimer();
+
+        SaveHighScores(CurrentScore);
+    }
+
+    /// <summary> Returns the current integer score. </summary>
+    public int GetFinalScore() => CurrentScore;
+
+    /// <summary> Returns top 5 scores (for a leaderboard UI). </summary>
+    public List<int> GetTopScores()
+    {
+        var top = new List<int>(5);
+        for (int i = 0; i < 5; i++)
+            top.Add(PlayerPrefs.GetInt("HighScore" + i, 0));
+        return top;
+    }
+
+    // ---------------- Helpers ----------------
+
+    private void UpdateScoreUI()
+    {
+        if (scoreText != null)
+            scoreText.text = $"Score: {CurrentScore}";
+    }
+
+    private static void SaveHighScores(int newScore)
+    {
+        // Read existing top 5
+        var scores = new List<int>(6);
+        for (int i = 0; i < 5; i++)
+            scores.Add(PlayerPrefs.GetInt("HighScore" + i, 0));
+
+        // Add and sort (desc), keep 5
+        scores.Add(newScore);
+        scores.Sort((a, b) => b.CompareTo(a));
+        for (int i = 0; i < 5; i++)
+            PlayerPrefs.SetInt("HighScore" + i, scores[i]);
+    }
 }

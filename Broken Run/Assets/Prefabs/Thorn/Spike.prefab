@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: -2034888411767283791}
   - component: {fileID: 5348051023725991442}
   - component: {fileID: -8388008457162590857}
-  m_Layer: 0
+  - component: {fileID: -5126932203488655608}
+  m_Layer: 11
   m_Name: Spike
   m_TagString: Spike
   m_Icon: {fileID: 0}
@@ -125,6 +126,18 @@ MonoBehaviour:
   explosionPrefab: {fileID: 3602895421638106805, guid: a492921cc88f0490b93f89be14764c83, type: 3}
   bounceForceX: 8
   bounceForceY: 8
+--- !u!114 &-5126932203488655608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974635967670695261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54237a06b2d303241a8d3c475250be51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinMarker
 --- !u!1 &4087568141961986169
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +149,7 @@ GameObject:
   - component: {fileID: 5287192924759189778}
   - component: {fileID: 4384422022503108019}
   - component: {fileID: 7126384397399156314}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Triangle (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +286,7 @@ GameObject:
   - component: {fileID: 1874214823943846445}
   - component: {fileID: 8753055698475451948}
   - component: {fileID: 2846096998021892163}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Triangle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -410,7 +423,7 @@ GameObject:
   - component: {fileID: 6896449310362912959}
   - component: {fileID: 6053276998194456847}
   - component: {fileID: 7290931913017893333}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Triangle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

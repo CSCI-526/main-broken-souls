@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 307498389386995926}
   - component: {fileID: 7835653428912628856}
   - component: {fileID: 6373224823087185756}
-  m_Layer: 0
+  - component: {fileID: 3784912936415860843}
+  - component: {fileID: 6208221047207962805}
+  m_Layer: 11
   m_Name: Obstacle1 1
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -181,3 +183,27 @@ MonoBehaviour:
   explosionPrefab: {fileID: 3602895421638106805, guid: a492921cc88f0490b93f89be14764c83, type: 3}
   bounceForceX: 12
   bounceForceY: 8
+--- !u!114 &3784912936415860843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342965573824974066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54237a06b2d303241a8d3c475250be51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinMarker
+--- !u!114 &6208221047207962805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342965573824974066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54237a06b2d303241a8d3c475250be51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinMarker

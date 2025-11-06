@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 5067863203772448176}
   - component: {fileID: -7817249636414543045}
   - component: {fileID: -1215601295817880538}
-  m_Layer: 0
+  - component: {fileID: -1592775523080812815}
+  m_Layer: 11
   m_Name: Coffin
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -181,3 +182,15 @@ MonoBehaviour:
   explosionPrefab: {fileID: 3602895421638106805, guid: a492921cc88f0490b93f89be14764c83, type: 3}
   bounceForceX: 12
   bounceForceY: 8
+--- !u!114 &-1592775523080812815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9048289401304330613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54237a06b2d303241a8d3c475250be51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinMarker

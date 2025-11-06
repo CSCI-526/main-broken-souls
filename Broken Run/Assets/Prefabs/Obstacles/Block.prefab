@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 1423297042863552430}
   - component: {fileID: 6088795091228594405}
   - component: {fileID: 4399379947376881480}
-  m_Layer: 0
+  - component: {fileID: -4800599434433692450}
+  m_Layer: 11
   m_Name: Block
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -165,3 +166,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-4800599434433692450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153973026827681992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54237a06b2d303241a8d3c475250be51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinMarker

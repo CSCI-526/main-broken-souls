@@ -14,15 +14,15 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Collectible
   - Water
   - UI
-  - 
+  - PickUp
   - Player
   - Ground
   - Background
   - PlayerWall
-  - 
+  - Obstacles
   - 
   - 
   - 
