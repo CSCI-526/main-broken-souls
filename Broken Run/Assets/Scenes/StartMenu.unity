@@ -177,7 +177,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Move Left: \u2190 / A\n\nMove Right: \u2192 / D\n\nJump: \u2191 / W\n\nSlide:
-    \u2193 / S"
+    \u2193 / S\n\nShoot: Space"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -951,8 +951,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Blocks move! Watch controls & gravity.\n\nKiller approaching! Keep distance.\n\nMistakes
-    happen! Learn & survive.\n\nShield: One-time use,\_use\_wisely."
+  m_text: "Watch Control Flips & gravity Flip.\n\nKiller approaching! Keep distance.\n\nMistakes
+    happen! Learn & survive.\n\nShield: One-time use,\_use\_wisely.\n\nGun: One-time
+    use, Shoot Obstacles"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
