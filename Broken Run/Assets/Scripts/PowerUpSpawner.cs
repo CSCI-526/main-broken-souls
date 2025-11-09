@@ -5,6 +5,8 @@ using System.Collections;
 /// Spawns Slow-Mo on an interval (optional) and spawns a Gun
 /// every time ScoreReader signals a milestone (e.g., 500, 1000, 1500...).
 /// Places pickups on the active ground/ceiling tile ahead of the player.
+/// 
+/// (Gun spawning has been temporarily disabled for testing.)
 /// </summary>
 public class PowerUpSpawner : MonoBehaviour
 {
@@ -45,6 +47,7 @@ public class PowerUpSpawner : MonoBehaviour
         if (scoreReader == null)
             scoreReader = FindObjectOfType<ScoreReader>();
 
+        // Start Slow-Mo spawning if enabled
         if (slowMoSpawnInterval > 0f && slowMoPrefab != null)
             StartCoroutine(SlowMoRoutine());
     }
@@ -54,6 +57,8 @@ public class PowerUpSpawner : MonoBehaviour
         if (scoreReader == null || gunPrefab == null || player == null || groundManager == null)
             return;
 
+        // GUN SPAWNING TEMPORARILY DISABLED
+        /*
         // Fire once per milestone
         if (scoreReader.TryConsumeMilestone(out int atScore))
         {
@@ -63,7 +68,7 @@ public class PowerUpSpawner : MonoBehaviour
                 pg.HasGun)
             {
                 // Do not advance the milestone here (ScoreReader already advanced),
-                // we simply skip this spawn; the next milestone will be used.
+                // simply skip this spawn; the next milestone will be used.
                 return;
             }
 
@@ -71,12 +76,14 @@ public class PowerUpSpawner : MonoBehaviour
             {
                 var pickup = Instantiate(gunPrefab, pos, Quaternion.identity);
 
+                // Flip vertically if gravity is inverted
                 if (gravityFlipped)
                     pickup.transform.localScale = new Vector3(
                         pickup.transform.localScale.x,
                         -Mathf.Abs(pickup.transform.localScale.y),
                         pickup.transform.localScale.z);
 
+                // Ensure it moves along with scrolling world
                 EnsureMover(pickup);
                 Debug.Log($"🔫 Gun spawned at milestone {atScore} -> {pos}");
             }
@@ -85,6 +92,7 @@ public class PowerUpSpawner : MonoBehaviour
                 Debug.Log("⚠️ No tile found for Gun spawn!");
             }
         }
+        */
     }
 
     // ----------------- Slow-Mo as before -----------------

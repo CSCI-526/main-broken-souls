@@ -19,6 +19,11 @@ public class Collectible : MonoBehaviour
         // ✅ Show floating "+1" popup at the coin position
         FloatingTextSpawner.I?.Show("+1", transform.position);
 
+        // --- NEW: notify PlayerGun to count coin toward ammo ---
+        var gun = other.GetComponent<PlayerGun>();
+        if (gun == null) gun = other.GetComponentInChildren<PlayerGun>();
+        if (gun != null) gun.OnCoinCollected();
+
         Debug.Log("Collected! +1");
 
         // Remove coin
