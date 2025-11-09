@@ -64,8 +64,11 @@ public class KillerController : MonoBehaviour
                 Debug.Log("Game Over! Player touched the killer!");
 
                 // Set health bar to zero
-                if (pc != null && pc.healthBar != null)
+                if (pc != null && pc.healthBar != null){
                     pc.healthBar.SetHealth(0f);
+                    pc.coverSync.SetHealth(0f);
+                }
+                    
 
                 ScoreManager.Instance.GameOver();
                 #if UNITY_2022_2_OR_NEWER

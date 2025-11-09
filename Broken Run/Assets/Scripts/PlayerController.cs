@@ -44,6 +44,8 @@ public class PlayerController : MonoBehaviour
     [Header("UI")]
     public HealthBar healthBar;
     [SerializeField] private ModeUIController modeUI; // Drag your ModeUIController here
+    //new
+    [SerializeField] public PlayerHealthCover coverSync;
 
     [Header("Damage")]
     public float damageCooldown = 0.5f;
@@ -258,6 +260,12 @@ public class PlayerController : MonoBehaviour
 
         float newHealth = healthBar.healthSlider.value - amount;
         healthBar.SetHealth(newHealth);
+
+        //new
+        if (coverSync != null)
+        {
+            coverSync.SetHealth(newHealth);
+        }
 
         Debug.Log($"Player took {amount} damage. New health: {newHealth}");
 
