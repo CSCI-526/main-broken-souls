@@ -31,15 +31,15 @@ public class PowerUpSpawner : MonoBehaviour
 
     [Header("Placement")]
     [Tooltip("How far in front of the player to drop the pickup.")]
-    public float spawnDistance = 25f;
+    public float spawnDistance = 15f;  // Reduced from 25f - easier to reach!
 
-    [Tooltip("Extra forward offset so it’s clearly ahead of obstacles.")]
-    public float extraForward = 5f;
+    [Tooltip("Extra forward offset so it's clearly ahead of obstacles.")]
+    public float extraForward = 2f;  // Reduced from 5f
 
     [Tooltip("Vertical offset from the tile center (positive up / negative down).")]
     public float yOffset = 3f;
 
-    [Tooltip("Small random vertical jitter so spawns aren’t identical.")]
+    [Tooltip("Small random vertical jitter so spawns aren't identical.")]
     public float randomYJitter = 0.3f;
 
     private void Start()
@@ -57,8 +57,6 @@ public class PowerUpSpawner : MonoBehaviour
         if (scoreReader == null || gunPrefab == null || player == null || groundManager == null)
             return;
 
-        // GUN SPAWNING TEMPORARILY DISABLED
-        /*
         // Fire once per milestone
         if (scoreReader.TryConsumeMilestone(out int atScore))
         {
@@ -92,7 +90,6 @@ public class PowerUpSpawner : MonoBehaviour
                 Debug.Log("⚠️ No tile found for Gun spawn!");
             }
         }
-        */
     }
 
     // ----------------- Slow-Mo as before -----------------

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GunPickup : MonoBehaviour
 {
-    [SerializeField] private float lifeSeconds = 15f;
+    [SerializeField] private float lifeSeconds = 20f;  // Increased from 15s - more time to reach it!
 
     private void Start()
     {
@@ -11,14 +11,23 @@ public class GunPickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        Debug.Log($"[GunPickup] Trigger hit by: {other.name} with tag: {other.tag}");
+        
+        if (!other.CompareTag("Player"))
+        {
+            Debug.LogWarning($"[GunPickup] Not player! Tag is: {other.tag}");
+            return;
+        }
 
         var gun = other.GetComponent<PlayerGun>();
-        if (gun == null) return;
+        if (gun == null)
+        {
+            Debug.LogError("[GunPickup] Player has no PlayerGun component!");
+            return;
+        }
 
-        // Do not allow pickup if player already has one
-        if (gun.HasGun) return;
-
+        // Always allow pickup - it refills ammo to max!
+        Debug.Log($"🔫 Gun collected! Refilling ammo to max ({gun.maxAmmo})");
         gun.GiveGun();
         Destroy(gameObject);
     }
