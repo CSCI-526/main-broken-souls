@@ -141,13 +141,24 @@ public class ModeUIController : MonoBehaviour
         TextMeshProUGUI target = (mode == ModeType.ReversedControls) ? flipTimerText : antiGravityTimerText;
         if (target == null) yield break;
 
-        // Enable only the relevant timer and hide the other
-        if (flipTimerText) flipTimerText.gameObject.SetActive(mode == ModeType.ReversedControls);
-        if (antiGravityTimerText) antiGravityTimerText.gameObject.SetActive(mode == ModeType.AntiGravity);
-
         const string prefix = "Back to normal in ";
         float t = seconds;
+        const float showLastSeconds = 5f; // Only show timer for LAST 5 seconds
 
+        // Hide timer initially
+        if (flipTimerText) flipTimerText.gameObject.SetActive(false);
+        if (antiGravityTimerText) antiGravityTimerText.gameObject.SetActive(false);
+
+        // Wait silently until last 5 seconds
+        while (t > showLastSeconds)
+        {
+            t -= Time.deltaTime;
+            yield return null;
+        }
+
+        // Now show timer for last 5 seconds
+        target.gameObject.SetActive(true);
+        
         while (t > 0f)
         {
             target.text = prefix + Mathf.CeilToInt(t).ToString();
@@ -155,6 +166,7 @@ public class ModeUIController : MonoBehaviour
             yield return null;
         }
 
+        // Hide when done
         target.gameObject.SetActive(false);
         timerRoutine = null;
     }
