@@ -77,20 +77,46 @@ public class GameOverUI : MonoBehaviour
             gameSpeed = ground.scrollSpeed;
         }
 
-        // Try Google Forms analytics (CORS-friendly)
+        // Calculate survival time (from GoogleFormAnalytics/SurvivalAnalytics startTime)
+        float survivalTime = 0f;
         GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
         if (formAnalytics != null)
         {
+            // GoogleFormAnalytics calculates it internally
             formAnalytics.OnPlayerDeath(finalScore, gameSpeed);
         }
-        // Fallback to regular analytics
         else if (SurvivalAnalytics.Instance != null)
         {
             SurvivalAnalytics.Instance.OnPlayerDeath(finalScore, gameSpeed);
         }
         else
         {
-            Debug.LogWarning("⚠️ No analytics system found in scene!");
+            Debug.LogWarning("⚠️ No old analytics system found in scene!");
+        }
+
+        // === NEW: Enhanced Analytics with 4 improved metrics ===
+        if (EnhancedAnalytics.Instance != null)
+        {
+            // Get survival time from Time.time (same as old analytics)
+            // Note: EnhancedAnalytics tracks its own startTime in StartNewSession
+            // For now we'll calculate from ScoreManager if available
+            survivalTime = Time.timeSinceLevelLoad; // Approximation
+            
+            // Get cause of death from tracker
+            string causeOfDeath = CauseOfDeathTracker.LastCauseOfDeath;
+            
+            Debug.Log($"📊 Sending Enhanced Analytics: Score={finalScore}, Time={survivalTime:F2}s, Speed={gameSpeed:F2}, Cause={causeOfDeath}");
+            
+            EnhancedAnalytics.Instance.OnPlayerDeath(
+                causeOfDeath,
+                survivalTime,
+                finalScore,
+                gameSpeed
+            );
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ EnhancedAnalytics not found! Did you add it to the scene?");
         }
     }
 
@@ -105,6 +131,9 @@ public class GameOverUI : MonoBehaviour
             ScoreManager.Instance.scoreText.gameObject.SetActive(true);
         }
 
+        // Reset cause of death tracker for new game
+        CauseOfDeathTracker.Reset();
+
         // Start new analytics session for next game
         GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
         if (formAnalytics != null)
@@ -114,6 +143,12 @@ public class GameOverUI : MonoBehaviour
         else if (SurvivalAnalytics.Instance != null)
         {
             SurvivalAnalytics.Instance.StartNewSession();
+        }
+
+        // Start new enhanced analytics session
+        if (EnhancedAnalytics.Instance != null)
+        {
+            EnhancedAnalytics.Instance.StartNewGameSession();
         }
 
         // Reload scene

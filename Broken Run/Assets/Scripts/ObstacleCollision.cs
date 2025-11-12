@@ -39,6 +39,7 @@ public class ObstacleCollision : MonoBehaviour
                     }
                     else
                     {
+                        CauseOfDeathTracker.RecordCause("Spike");
                         player.TakeDamage(25f);
                     }
 

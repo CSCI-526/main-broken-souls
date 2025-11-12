@@ -63,6 +63,9 @@ public class KillerController : MonoBehaviour
             {
                 Debug.Log("Game Over! Player touched the killer!");
 
+                // Record cause of death for analytics
+                CauseOfDeathTracker.RecordCause("Killer");
+
                 // Set health bar to zero
                 if (pc != null && pc.healthBar != null){
                     pc.healthBar.SetHealth(0f);
