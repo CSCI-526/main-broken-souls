@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI")]
     public HealthBar healthBar;
-    [SerializeField] private ModeUIController modeUI; // Drag your ModeUIController here
+    [SerializeField] public ModeUIController modeUI; // Drag your ModeUIController here
     //new
     [SerializeField] public PlayerHealthCover coverSync;
 
@@ -210,10 +210,10 @@ public class PlayerController : MonoBehaviour
 
             // 1) 3s forecast
             if(nextMode == ModeType.ReversedControls){
-                image.color = flippedColor;//
+                if (image != null) image.color = flippedColor;//
             }
             if(nextMode == ModeType.AntiGravity){
-                image.color = gravityFlippedColor;
+                if (image != null) image.color = gravityFlippedColor;
             }
             if (modeUI != null) modeUI.ShowForecast(nextMode, 3f);
             yield return new WaitForSeconds(3f);
@@ -265,6 +265,7 @@ public class PlayerController : MonoBehaviour
         if (coverSync != null)
         {
             coverSync.SetHealth(newHealth);
+            Debug.Log("Player took {amount} damage. New health: {newHealth}");
         }
 
         Debug.Log($"Player took {amount} damage. New health: {newHealth}");

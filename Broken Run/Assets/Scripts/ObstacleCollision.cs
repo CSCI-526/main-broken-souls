@@ -8,6 +8,7 @@ public class ObstacleCollision : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("[Spike] touched {collision.collider.name}, tag={collision.collider.tag}");
         // Killer collision
         if (collision.collider.CompareTag("Killer"))
         {

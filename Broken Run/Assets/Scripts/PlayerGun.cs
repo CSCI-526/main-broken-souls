@@ -9,9 +9,8 @@ public class PlayerGun : MonoBehaviour
     public TextMeshProUGUI gunIndicatorText;
 
     [Header("Muzzle Visual")]
-    // public SpriteRenderer muzzleSprite;      // small square/rect on the muzzle   <-- 不再用它换色
-    public Color unarmedColor = new Color(0.85f, 0.85f, 0.85f);  // light grey (空槽填充色/白底)
-    public Color armedColor = new Color(0.59f, 0.29f, 0.0f);     // brown (#964B00) (有弹填充色)
+    public Color unarmedColor = new Color(0.85f, 0.85f, 0.85f);  // light grey 
+    public Color armedColor = new Color(0.59f, 0.29f, 0.0f);     // brown (#964B00)
 
     [Header("Shoot Settings")]
     public float bulletSpeed = 28f;
@@ -22,10 +21,9 @@ public class PlayerGun : MonoBehaviour
     private int currentAmmo = 1;     // start with 1 bullet
 
     [Header("Ammo Slots (Fill sprites)")]
-    // 拖 3 个“槽位的填充方块”(SpriteRenderer)，顺序从左到右
     public SpriteRenderer[] slotFills = new SpriteRenderer[3];
 
-    // --- Coin → Ammo （如果你之前已加就保留；没用可以删掉）---
+
     public int coinsPerAmmo = 9;     // collect 9 coins -> +1 ammo
     private int coinBank = 0;
 
@@ -35,7 +33,7 @@ public class PlayerGun : MonoBehaviour
     void Start()
     {
         UpdateIndicator();
-        UpdateAmmoVisuals();  // 初始化刷新槽位颜色
+        UpdateAmmoVisuals();
     }
 
     void Update()
@@ -91,7 +89,7 @@ public class PlayerGun : MonoBehaviour
         UpdateAmmoVisuals();
     }
 
-    // --- called by coin pickup (可选：若你在 Collectible 里调用了 OnCoinCollected) ---
+    // --- called by coin pickup ---
     public void OnCoinCollected()
     {
         coinBank++;
@@ -115,7 +113,7 @@ public class PlayerGun : MonoBehaviour
             gunIndicatorText.text = HasGun ? $"Gun: {currentAmmo}/{maxAmmo}" : "Gun: none";
     }
 
-    // --- NEW: 根据 currentAmmo 设置 3 个槽位的填充颜色 ---
+    // --- NEW
     void UpdateAmmoVisuals()
     {
         if (slotFills == null) return;
@@ -124,7 +122,6 @@ public class PlayerGun : MonoBehaviour
             var sr = slotFills[i];
             if (sr == null) continue;
 
-            // i < currentAmmo → 填充为棕色；否则为白底
             sr.color = (i < currentAmmo) ? armedColor : unarmedColor;
         }
     }
