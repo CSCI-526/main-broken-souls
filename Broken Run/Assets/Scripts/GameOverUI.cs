@@ -19,23 +19,45 @@ public class GameOverUI : MonoBehaviour
 
     public void ShowGameOver()
     {
-        // 1) fade out the �Back to normal in �� timers / banners
+        // 1) fade out the "Back to normal in ..." timers / banners
         if (modeUI != null) modeUI.HideAllWithFade(0.25f);
         // new
         //if (shieldTipUI != null) shieldTipUI.SetActive(false);// deleted
 
-        // 2) now show the game-over UI
+        // 2) now show the game-over UI FIRST
         gameOverPanel.SetActive(true);
 
         int finalScore = ScoreManager.Instance.GetFinalScore();
-        finalScoreText.text = $"Final Score: {finalScore}";
+        
+        Debug.Log($"[GameOverUI] Showing final score: {finalScore}");
+        
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = $"Final Score: {finalScore}";
+            finalScoreText.gameObject.SetActive(true); // Make sure it's visible
+            Debug.Log($"[GameOverUI] Final score text updated and visible");
+        }
+        else
+        {
+            Debug.LogError("[GameOverUI] finalScoreText is NULL! Please assign it in Inspector.");
+        }
 
         List<int> topScores = ScoreManager.Instance.GetTopScores();
 
         string leaderboard = "Leaderboard:\n";
         for (int i = 0; i < topScores.Count; i++)
             leaderboard += $"{i + 1}. {topScores[i]}\n";
-        leaderboardText.text = leaderboard;
+        
+        if (leaderboardText != null)
+        {
+            leaderboardText.text = leaderboard;
+        }
+
+        // 3) Hide the live score at top of screen AFTER setting game over text
+        if (ScoreManager.Instance != null && ScoreManager.Instance.scoreText != null)
+        {
+            ScoreManager.Instance.scoreText.gameObject.SetActive(false);
+        }
 
         // 📊 Send Analytics Data
         SendAnalytics(finalScore);
@@ -76,6 +98,12 @@ public class GameOverUI : MonoBehaviour
     {
         // Reset time scale BEFORE loading scene
         Time.timeScale = 1f;
+
+        // Show the score text again for next game
+        if (ScoreManager.Instance != null && ScoreManager.Instance.scoreText != null)
+        {
+            ScoreManager.Instance.scoreText.gameObject.SetActive(true);
+        }
 
         // Start new analytics session for next game
         GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();

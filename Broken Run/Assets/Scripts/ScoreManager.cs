@@ -54,6 +54,11 @@ public class ScoreManager : MonoBehaviour
     {
         score = 0f;
         isGameOver = false;
+        
+        // Make sure score text is visible at game start
+        if (scoreText != null)
+            scoreText.gameObject.SetActive(true);
+        
         UpdateScoreUI();
 
         // Reset and start survival timer if present
