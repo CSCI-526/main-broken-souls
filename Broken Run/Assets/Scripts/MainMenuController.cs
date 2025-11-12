@@ -80,6 +80,10 @@ public class MainMenuController : MonoBehaviour
     {
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
     }
+    public void PlayTutorial()
+    {
+        StartCoroutine(FadeOutAndLoadScene("tutorial"));
+    }
 
     public void ShowInstructions()
     {
