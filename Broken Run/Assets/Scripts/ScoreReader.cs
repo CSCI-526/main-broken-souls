@@ -4,8 +4,8 @@ using UnityEngine;
 /// current score has crossed the next milestone.
 public class ScoreReader : MonoBehaviour
 {
-    [Tooltip("First milestone and the step size (e.g., 300).")]
-    public int milestoneStep = 300;
+    [Tooltip("First milestone and the step size (e.g., 500).")]
+    public int milestoneStep = 500;
 
     private int _nextMilestone;
 
@@ -17,7 +17,7 @@ public class ScoreReader : MonoBehaviour
         ResetMilestones();
     }
 
-    /// Reset to the next 500 boundary (usually 300).
+    /// Reset to the next milestone boundary (based on milestoneStep).
     public void ResetMilestones()
     {
         int current = GetScore();
@@ -43,7 +43,7 @@ public class ScoreReader : MonoBehaviour
 
     private int GetScore()
     {
-        // Uses your ScoreManager. If ScoreManager isn’t present yet, return 0.
+        // Uses your ScoreManager. If ScoreManager isnï¿½t present yet, return 0.
         return (ScoreManager.Instance != null) ? ScoreManager.Instance.GetFinalScore() : 0;
     }
 }

@@ -24,6 +24,12 @@ public class Collectible : MonoBehaviour
         if (gun == null) gun = other.GetComponentInChildren<PlayerGun>();
         if (gun != null) gun.OnCoinCollected();
 
+        // Track coin collection for analytics
+        if (EnhancedAnalytics.Instance != null)
+        {
+            EnhancedAnalytics.Instance.OnCoinCollected();
+        }
+
         Debug.Log("Collected! +1");
 
         // Remove coin

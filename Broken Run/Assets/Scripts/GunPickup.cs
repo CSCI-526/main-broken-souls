@@ -29,6 +29,13 @@ public class GunPickup : MonoBehaviour
         // Always allow pickup - it refills ammo to max!
         Debug.Log($"🔫 Gun collected! Refilling ammo to max ({gun.maxAmmo})");
         gun.GiveGun();
+        
+        // Track power-up collection for analytics
+        if (EnhancedAnalytics.Instance != null)
+        {
+            EnhancedAnalytics.Instance.OnPowerUpCollected();
+        }
+        
         Destroy(gameObject);
     }
 }

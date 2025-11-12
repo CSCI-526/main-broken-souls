@@ -11,6 +11,20 @@ public class ShieldPickup : MonoBehaviour
             {
                 player.ActivateShield(); // ✅ Use method instead of hasShield=true
             }
+            
+            // Also check for NewPlayerController if it exists
+            var newPlayer = other.GetComponent<NewPlayerController>();
+            if (newPlayer != null)
+            {
+                newPlayer.ActivateShield();
+            }
+            
+            // Track power-up collection for analytics
+            if (EnhancedAnalytics.Instance != null)
+            {
+                EnhancedAnalytics.Instance.OnPowerUpCollected();
+            }
+            
             Destroy(gameObject);
         }
     }
