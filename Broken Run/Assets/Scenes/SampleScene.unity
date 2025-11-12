@@ -2043,7 +2043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f10afb6b50e54394b9a6c23613bd6af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreReader
-  milestoneStep: 300
+  milestoneStep: 500
 --- !u!4 &535603930
 Transform:
   m_ObjectHideFlags: 0
@@ -3508,7 +3508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f10afb6b50e54394b9a6c23613bd6af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreReader
-  milestoneStep: 300
+  milestoneStep: 500
 --- !u!1 &866042525
 GameObject:
   m_ObjectHideFlags: 0
