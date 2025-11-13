@@ -233,14 +233,7 @@ public class ObstacleSpawner : MonoBehaviour
         mover.speed = groundManager.scrollSpeed;
         mover.despawnX = player.position.x - 20f;
 
-        // Optionally attach coin - position depends on gravity
-        if (!isShield && groundManager.coinPrefab != null && Random.value < 0.5f)
-        {
-            float coinOffsetDirection = gravityFlipped ? -2.5f : 2.5f;
-            Vector3 coinPos = obj.transform.position + Vector3.up * coinOffsetDirection;
-            GameObject coin = Instantiate(groundManager.coinPrefab, coinPos, Quaternion.identity);
-            coin.transform.SetParent(obj.transform);
-        }
+   
     }
 
     // deleted

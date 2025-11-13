@@ -551,6 +551,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127025618}
   m_CullTransparentMesh: 1
+--- !u!1 &140603075
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 140603076}
+  - component: {fileID: 140603077}
+  m_Layer: 0
+  m_Name: CoinSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &140603076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140603075}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 523.6233, y: 153.44574, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &140603077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140603075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ecbfa10469be2941a8f4bbb8ffc957d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinSpawner
+  coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
+  player: {fileID: 1256906662}
+  groundManager: {fileID: 967972291}
+  spawnInterval: 0.5
+  spawnDistance: 22
+  yOffset: 1.8
+  randomYJitter: 0.25
 --- !u!1 &177417954
 GameObject:
   m_ObjectHideFlags: 0
@@ -3881,7 +3932,6 @@ MonoBehaviour:
   maxScrollSpeed: 20
   player: {fileID: 1256906662}
   killerPrefab: {fileID: 1574919655}
-  coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
   groundTiles: []
   ceilingY: 4.5
   ceilingTiles: []
@@ -8676,3 +8726,4 @@ SceneRoots:
   - {fileID: 249586639}
   - {fileID: 535603930}
   - {fileID: 1718582415}
+  - {fileID: 140603076}
