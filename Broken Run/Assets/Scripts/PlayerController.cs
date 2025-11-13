@@ -285,7 +285,7 @@ public class PlayerController : MonoBehaviour
             #else
             FindObjectOfType<GameOverUI>().ShowGameOver();
             #endif
-            
+            StopAllCoroutines();
             Time.timeScale = 0f;
         }
     }
@@ -395,23 +395,23 @@ public void ActivateSlowMotion()
 private IEnumerator SlowMotionRoutine()
 {
     isSlowMoActive = true;
-
-    // Slow down everything in the game
     Time.timeScale = slowMoScale;
-    Time.fixedDeltaTime = 0.02f * Time.timeScale; // keep physics stable
-
+    Time.fixedDeltaTime = 0.02f * Time.timeScale;
     Debug.Log("🌀 Slow Motion Activated!");
 
-    // Wait 10 seconds in *real* time
     yield return new WaitForSecondsRealtime(slowMoDuration);
 
-    // Restore normal time
-    Time.timeScale = 1f;
-    Time.fixedDeltaTime = 0.02f;
-    isSlowMoActive = false;
+    // ✅ Check if player is still alive before restoring time
+    if (healthBar != null && healthBar.healthSlider.value > 0)
+    {
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f;
+    }
 
+    isSlowMoActive = false;
     Debug.Log("⏱️ Slow Motion Ended!");
 }
+
 
 
     private void OnDrawGizmos()
