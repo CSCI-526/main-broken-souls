@@ -47,8 +47,13 @@ public class PlayerGun : MonoBehaviour
 
     public void GiveGun()
     {
-        // When gun is given, refill to max
-        currentAmmo = maxAmmo;
+        // When gun is given, refill 2 bullets
+        if(currentAmmo + 2 > 3){
+            currentAmmo = maxAmmo;
+        }else{
+            currentAmmo = currentAmmo + 2;
+        }
+        
         UpdateIndicator();
         UpdateAmmoVisuals();
     }
