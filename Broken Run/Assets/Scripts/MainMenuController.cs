@@ -21,9 +21,24 @@ public class MainMenuController : MonoBehaviour
     public float fadeSpeed = 2f;
     public float buttonHoverScale = 1.1f;
     public float buttonAnimSpeed = 0.2f;
+    
+    [Header("Tutorial Settings")]
+    [Tooltip("Button for Play Game - will be disabled until tutorial completed")]
+    public Button playGameButton;
 
     private void Start()
     {
+        // Check if tutorial has been completed
+        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        
+        // If tutorial not completed, force redirect to tutorial
+        if (!tutorialCompleted)
+        {
+            Debug.Log("[MainMenu] Tutorial not completed - forcing tutorial on first play");
+            StartCoroutine(ForceTutorialAfterDelay());
+            return; // Don't show main menu yet
+        }
+        
         // Setup canvas groups if not assigned
         if (mainMenuCanvasGroup == null && mainMenuPanel != null)
             mainMenuCanvasGroup = mainMenuPanel.GetComponent<CanvasGroup>() ?? mainMenuPanel.AddComponent<CanvasGroup>();
@@ -39,6 +54,39 @@ public class MainMenuController : MonoBehaviour
         
         // Add button hover effects
         AddButtonHoverEffects();
+        
+        // Update Play Game button state
+        UpdatePlayGameButtonState(tutorialCompleted);
+    }
+    
+    private IEnumerator ForceTutorialAfterDelay()
+    {
+        // Small delay to ensure scene is loaded
+        yield return new WaitForSeconds(0.5f);
+        
+        // Automatically load tutorial
+        PlayTutorial();
+    }
+    
+    private void UpdatePlayGameButtonState(bool tutorialCompleted)
+    {
+        if (playGameButton != null)
+        {
+            playGameButton.interactable = tutorialCompleted;
+            
+            // Optional: Add visual feedback (gray out button)
+            var colors = playGameButton.colors;
+            if (!tutorialCompleted)
+            {
+                colors.normalColor = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Grayed out
+                colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            }
+            else
+            {
+                colors.normalColor = Color.white;
+            }
+            playGameButton.colors = colors;
+        }
     }
 
     private IEnumerator FadeInMainMenu()
@@ -78,8 +126,21 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
+        // Check if tutorial has been completed
+        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        
+        if (!tutorialCompleted)
+        {
+            // Tutorial not completed - force player to complete it first
+            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first!");
+            PlayTutorial(); // Redirect to tutorial instead
+            return;
+        }
+        
+        // Tutorial completed - allow playing the game
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
     }
+    
     public void PlayTutorial()
     {
         StartCoroutine(FadeOutAndLoadScene("tutorial"));
