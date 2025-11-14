@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class MainMenuController : MonoBehaviour
@@ -9,13 +10,20 @@ public class MainMenuController : MonoBehaviour
     public GameObject instructionsPanel;
     public GameObject tipsPanel;
     public GameObject mainMenuPanel;
+    public GameObject tutorialPromptPanel; // Simple popup that shows message
     
     [Header("UI Elements")]
     public CanvasGroup mainMenuCanvasGroup;
     public CanvasGroup instructionsCanvasGroup;
     public CanvasGroup tipsCanvasGroup;
+    public CanvasGroup tutorialPromptCanvasGroup;
     public Transform titleTransform;
     public Button[] menuButtons;
+    
+    [Header("Tutorial Prompt")]
+    public TextMeshProUGUI tutorialPromptText; // Message text in popup
+    [Tooltip("How long the popup stays visible before auto-closing (seconds)")]
+    public float promptDisplayDuration = 3f;
     
     [Header("Animation Settings")]
     public float fadeSpeed = 2f;
@@ -25,6 +33,8 @@ public class MainMenuController : MonoBehaviour
     [Header("Tutorial Settings")]
     [Tooltip("Button for Play Game - will be disabled until tutorial completed")]
     public Button playGameButton;
+    
+    private Coroutine promptCoroutine;
 
     private void Start()
     {
@@ -44,6 +54,22 @@ public class MainMenuController : MonoBehaviour
         
         if (tipsCanvasGroup == null && tipsPanel != null)
             tipsCanvasGroup = tipsPanel.GetComponent<CanvasGroup>() ?? tipsPanel.AddComponent<CanvasGroup>();
+        
+        // Setup tutorial prompt panel
+        if (tutorialPromptCanvasGroup == null && tutorialPromptPanel != null)
+            tutorialPromptCanvasGroup = tutorialPromptPanel.GetComponent<CanvasGroup>() ?? tutorialPromptPanel.AddComponent<CanvasGroup>();
+        
+        // Hide tutorial prompt panel initially
+        if (tutorialPromptPanel != null)
+        {
+            tutorialPromptPanel.SetActive(false);
+        }
+        
+        // Set tutorial prompt message
+        if (tutorialPromptText != null)
+        {
+            tutorialPromptText.text = "Please complete the tutorial first!";
+        }
 
         // Start with fade-in animation
         StartCoroutine(FadeInMainMenu());
@@ -123,15 +149,73 @@ public class MainMenuController : MonoBehaviour
         
         if (!tutorialCompleted)
         {
-            // Tutorial not completed - force player to complete it first
-            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Redirecting to tutorial...");
-            PlayTutorial(); // Redirect to tutorial instead
+            // Tutorial not completed - show popup message
+            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Showing prompt...");
+            ShowTutorialPrompt();
             return;
         }
         
         // Tutorial completed - allow playing the game
         Debug.Log("[MainMenu] Tutorial completed - loading game scene");
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
+    }
+    
+    // -------------------- TUTORIAL PROMPT METHODS --------------------
+    
+    public void ShowTutorialPrompt()
+    {
+        if (tutorialPromptPanel == null)
+        {
+            Debug.LogWarning("[MainMenu] Tutorial prompt panel not assigned!");
+            return;
+        }
+        
+        // Stop any existing prompt coroutine
+        if (promptCoroutine != null)
+        {
+            StopCoroutine(promptCoroutine);
+        }
+        
+        // Show the popup
+        tutorialPromptPanel.SetActive(true);
+        promptCoroutine = StartCoroutine(ShowPromptAndAutoClose());
+    }
+    
+    private IEnumerator ShowPromptAndAutoClose()
+    {
+        // Fade in
+        if (tutorialPromptCanvasGroup != null)
+        {
+            tutorialPromptCanvasGroup.alpha = 0f;
+            float elapsed = 0f;
+            while (elapsed < 0.3f) // Quick fade in
+            {
+                elapsed += Time.deltaTime * fadeSpeed;
+                tutorialPromptCanvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / 0.3f);
+                yield return null;
+            }
+            tutorialPromptCanvasGroup.alpha = 1f;
+        }
+        
+        // Wait for display duration
+        yield return new WaitForSeconds(promptDisplayDuration);
+        
+        // Fade out
+        if (tutorialPromptCanvasGroup != null)
+        {
+            float elapsed = 0f;
+            while (elapsed < 0.3f) // Quick fade out
+            {
+                elapsed += Time.deltaTime * fadeSpeed;
+                tutorialPromptCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / 0.3f);
+                yield return null;
+            }
+            tutorialPromptCanvasGroup.alpha = 0f;
+        }
+        
+        // Hide panel
+        tutorialPromptPanel.SetActive(false);
+        promptCoroutine = null;
     }
     
     // Helper method to reset tutorial (for testing purposes)
