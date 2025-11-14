@@ -4958,7 +4958,6 @@ GameObject:
   - component: {fileID: 1256906661}
   - component: {fileID: 1256906663}
   - component: {fileID: 1256906664}
-  - component: {fileID: 1256906667}
   - component: {fileID: 1256906665}
   - component: {fileID: 1256906666}
   - component: {fileID: 1256906669}
@@ -5281,50 +5280,6 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!114 &1256906667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256906660}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca863a14a9323ea40a3def795cc6c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewPlayerController
-  moveSpeed: 5
-  jumpForce: 6
-  minX: -1
-  maxX: 1
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  baseMoveSpeed: 5
-  baseJumpForce: 14
-  speedScaleFactor: 0.1
-  crouchSpeedMultiplier: 0.5
-  playerCollider: {fileID: 1256906665}
-  standSize: {x: 0.5, y: 1.5}
-  crouchSize: {x: 0.5, y: 0.8}
-  standOffset: {x: 0, y: 0}
-  crouchOffset: {x: 0, y: -0.35}
-  crouchSmoothSpeed: 10
-  normalColor: {r: 0.8509804, g: 0.47058824, b: 0.23529412, a: 1}
-  flippedColor: {r: 0.77254903, g: 0.14117648, b: 0.7607843, a: 1}
-  gravityFlippedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  hasShield: 0
-  shieldDuration: 10
-  shieldBounceForce: 6
-  healthBar: {fileID: 1837687999}
-  modeUI: {fileID: 1771566876}
-  damageCooldown: 0.5
-  minInterval: 8
-  maxInterval: 14
-  minEffectDuration: 10
-  maxEffectDuration: 15
-  image: {fileID: 1476514044}
-  shieldVisual: {fileID: 591615900}
 --- !u!114 &1256906669
 MonoBehaviour:
   m_ObjectHideFlags: 0

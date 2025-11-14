@@ -34,7 +34,7 @@ public class ObstacleCollision : MonoBehaviour
                 {
                     if (player.hasShield)
                     {
-                        player.hasShield = false;
+                        // player.hasShield = false;
                         player.DeactivateShield();
                         Debug.Log("🛡 Shield absorbed spike! No damage taken.");
                     }

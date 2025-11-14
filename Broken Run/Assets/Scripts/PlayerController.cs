@@ -345,17 +345,9 @@ private float remainingShieldTime;
 
 private IEnumerator ShieldTimer()
 {
-    float blinkStart = 2f;
-    bool blink = false;
-
     while (remainingShieldTime > 0f)
     {
-        // Optional blink during last 2 seconds
-        if (remainingShieldTime <= blinkStart && shieldVisual != null)
-        {
-            blink = !blink;
-            shieldVisual.SetActive(blink);
-        }
+        // ❌ Removed all blink logic
 
         remainingShieldTime -= 0.25f;
         yield return new WaitForSeconds(0.25f);
