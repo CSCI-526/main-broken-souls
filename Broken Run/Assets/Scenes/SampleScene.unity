@@ -2503,8 +2503,8 @@ MonoBehaviour:
   shieldSpawnChance: 0.15
   player: {fileID: 1256906662}
   groundManager: {fileID: 967972291}
-  spawnDistance: 25
-  spawnInterval: 5
+  spawnDistance: 16
+  spawnInterval: 3
   airOffset: 2.5
   airSpawnChance: 0.5
 --- !u!4 &712689106
