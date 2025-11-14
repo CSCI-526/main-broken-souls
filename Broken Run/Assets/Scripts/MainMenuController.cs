@@ -29,15 +29,11 @@ public class MainMenuController : MonoBehaviour
     private void Start()
     {
         // Check if tutorial has been completed
-        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
+        bool tutorialCompleted = tutorialStatus == 1;
         
-        // If tutorial not completed, force redirect to tutorial
-        if (!tutorialCompleted)
-        {
-            Debug.Log("[MainMenu] Tutorial not completed - forcing tutorial on first play");
-            StartCoroutine(ForceTutorialAfterDelay());
-            return; // Don't show main menu yet
-        }
+        // Debug log to see current status
+        Debug.Log($"[MainMenu] Tutorial completion status: {tutorialStatus} (0=not completed, 1=completed)");
         
         // Setup canvas groups if not assigned
         if (mainMenuCanvasGroup == null && mainMenuPanel != null)
@@ -55,31 +51,24 @@ public class MainMenuController : MonoBehaviour
         // Add button hover effects
         AddButtonHoverEffects();
         
-        // Update Play Game button state
+        // Update Play Game button state (will be enabled/disabled based on tutorial completion)
         UpdatePlayGameButtonState(tutorialCompleted);
-    }
-    
-    private IEnumerator ForceTutorialAfterDelay()
-    {
-        // Small delay to ensure scene is loaded
-        yield return new WaitForSeconds(0.5f);
-        
-        // Automatically load tutorial
-        PlayTutorial();
     }
     
     private void UpdatePlayGameButtonState(bool tutorialCompleted)
     {
+        // Keep button always enabled so user can click it
+        // The PlayGame() method will handle redirecting to tutorial if needed
         if (playGameButton != null)
         {
-            playGameButton.interactable = tutorialCompleted;
+            playGameButton.interactable = true; // Always enabled
             
-            // Optional: Add visual feedback (gray out button)
+            // Optional: Visual feedback - slightly dimmed if tutorial not completed
             var colors = playGameButton.colors;
             if (!tutorialCompleted)
             {
-                colors.normalColor = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Grayed out
-                colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                // Slightly dimmed but still clickable
+                colors.normalColor = new Color(0.8f, 0.8f, 0.8f, 1f);
             }
             else
             {
@@ -127,18 +116,31 @@ public class MainMenuController : MonoBehaviour
     public void PlayGame()
     {
         // Check if tutorial has been completed
-        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
+        bool tutorialCompleted = tutorialStatus == 1;
+        
+        Debug.Log($"[MainMenu] PlayGame clicked - Tutorial status: {tutorialStatus} (0=not completed, 1=completed)");
         
         if (!tutorialCompleted)
         {
             // Tutorial not completed - force player to complete it first
-            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first!");
+            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Redirecting to tutorial...");
             PlayTutorial(); // Redirect to tutorial instead
             return;
         }
         
         // Tutorial completed - allow playing the game
+        Debug.Log("[MainMenu] Tutorial completed - loading game scene");
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
+    }
+    
+    // Helper method to reset tutorial (for testing purposes)
+    // You can call this from Unity Inspector or add a button to test
+    public void ResetTutorialCompletion()
+    {
+        PlayerPrefs.DeleteKey("TutorialCompleted");
+        PlayerPrefs.Save();
+        Debug.Log("[MainMenu] Tutorial completion status RESET - next play will require tutorial");
     }
     
     public void PlayTutorial()
