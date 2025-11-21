@@ -82,27 +82,17 @@ public class MainMenuController : MonoBehaviour
     }
     
     private void UpdatePlayGameButtonState(bool tutorialCompleted)
+{
+    if (playGameButton != null)
     {
-        // Keep button always enabled so user can click it
-        // The PlayGame() method will handle redirecting to tutorial if needed
-        if (playGameButton != null)
-        {
-            playGameButton.interactable = true; // Always enabled
-            
-            // Optional: Visual feedback - slightly dimmed if tutorial not completed
-            var colors = playGameButton.colors;
-            if (!tutorialCompleted)
-            {
-                // Slightly dimmed but still clickable
-                colors.normalColor = new Color(0.8f, 0.8f, 0.8f, 1f);
-            }
-            else
-            {
-                colors.normalColor = Color.white;
-            }
-            playGameButton.colors = colors;
-        }
+        playGameButton.interactable = true;
+
+        // Always normal color
+        var colors = playGameButton.colors;
+        colors.normalColor = Color.white;
+        playGameButton.colors = colors;
     }
+}
 
     private IEnumerator FadeInMainMenu()
     {
@@ -141,22 +131,22 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
-        // Check if tutorial has been completed
-        int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
-        bool tutorialCompleted = tutorialStatus == 1;
+        // // Check if tutorial has been completed
+        // int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
+        // bool tutorialCompleted = tutorialStatus == 1;
         
-        Debug.Log($"[MainMenu] PlayGame clicked - Tutorial status: {tutorialStatus} (0=not completed, 1=completed)");
+        // Debug.Log($"[MainMenu] PlayGame clicked - Tutorial status: {tutorialStatus} (0=not completed, 1=completed)");
         
-        if (!tutorialCompleted)
-        {
-            // Tutorial not completed - show popup message
-            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Showing prompt...");
-            ShowTutorialPrompt();
-            return;
-        }
+        // if (!tutorialCompleted)
+        // {
+        //     // Tutorial not completed - show popup message
+        //     Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Showing prompt...");
+        //     ShowTutorialPrompt();
+        //     return;
+        // }
         
-        // Tutorial completed - allow playing the game
-        Debug.Log("[MainMenu] Tutorial completed - loading game scene");
+        // // Tutorial completed - allow playing the game
+        // Debug.Log("[MainMenu] Tutorial completed - loading game scene");
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
     }
     
