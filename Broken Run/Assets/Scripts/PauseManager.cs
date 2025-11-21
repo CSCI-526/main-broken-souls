@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-
-// Optional: works if you're using the new Input System
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -11,28 +9,28 @@ using UnityEngine.InputSystem;
 public class PauseManager : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private CanvasGroup pauseMenu;          // Drag your PauseMenu panel's CanvasGroup
-    [SerializeField] private Selectable defaultSelected;     // Drag ResumeButton (Button/Selectable)
+    [SerializeField] private CanvasGroup pauseMenu;
+    [SerializeField] private Selectable defaultSelected;
 
-    [Header("Game Over (optional)")]
-    [SerializeField] private GameOverUI gameOverUI;          // Drag your GameOverUI (to block pausing on death)
+    [Header("Game Over")]
+    [SerializeField] private GameOverUI gameOverUI;
 
-    [Header("Audio (optional)")]
-    [SerializeField] private bool pauseAudioListener = true; // Toggle audio pause with menu
+    [Header("Audio")]
+    [SerializeField] private bool pauseAudioListener = true;
+    [SerializeField] private MusicManager musicManager;
 
-    [Header("Input (optional - New Input System)")]
 #if ENABLE_INPUT_SYSTEM
-    [SerializeField] private InputActionReference pauseAction; // Bind to <Keyboard>/escape (and/or gamepad Start)
+    [SerializeField] private InputActionReference pauseAction;
 #endif
 
     private bool isPaused;
 
     void Awake()
     {
-        // Ensure menu starts hidden
-        SetMenuVisible(false, setSelection: false);
+        SetMenuVisible(false, false);
         Time.timeScale = 1f;
         if (pauseAudioListener) AudioListener.pause = false;
+        if (musicManager != null) musicManager.PlayMusic();
     }
 
     void OnEnable()
@@ -59,7 +57,6 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
-        // Fallback: if no InputAction assigned, listen for Escape
 #if ENABLE_INPUT_SYSTEM
         bool hasBoundAction = (pauseAction != null && pauseAction.action != null);
         if (!hasBoundAction)
@@ -79,8 +76,7 @@ public class PauseManager : MonoBehaviour
 
     public void TogglePause()
     {
-        // Block pause if GameOver is visible
-        if (gameOverUI != null && gameOverUI.gameOverPanel != null && gameOverUI.gameOverPanel.activeSelf)
+        if (gameOverUI != null && gameOverUI.gameOverPanel.activeSelf)
             return;
 
         if (isPaused) Resume();
@@ -91,43 +87,44 @@ public class PauseManager : MonoBehaviour
     {
         isPaused = true;
         Time.timeScale = 0f;
-        if (pauseAudioListener) AudioListener.pause = true;
 
-        SetMenuVisible(true, setSelection: true);
+        if (pauseAudioListener) AudioListener.pause = true;
+        if (musicManager != null) musicManager.PauseMusic();
+
+        SetMenuVisible(true, true);
     }
 
     public void Resume()
     {
         isPaused = false;
         Time.timeScale = 1f;
-        if (pauseAudioListener) AudioListener.pause = false;
 
-        SetMenuVisible(false, setSelection: false);
-        // Clear selection so gameplay UI regains focus naturally
+        if (pauseAudioListener) AudioListener.pause = false;
+        if (musicManager != null) musicManager.PlayMusic();
+
+        SetMenuVisible(false, false);
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);
     }
 
-  
+    public void RestartScene()
+    {
+        Time.timeScale = 1f;
+        if (pauseAudioListener) AudioListener.pause = false;
+        if (musicManager != null) musicManager.StopMusic();
 
-public void RestartScene()
-{
-    Time.timeScale = 1f;
-    if (pauseAudioListener) AudioListener.pause = false;
-
-    var scene = SceneManager.GetActiveScene();
-    SceneManager.LoadScene(scene.name);
-}
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
 
     public void QuitGame()
-{
-    // Always unpause before switching scenes
-    Time.timeScale = 1f;
-    if (pauseAudioListener) AudioListener.pause = false;
+    {
+        Time.timeScale = 1f;
+        if (pauseAudioListener) AudioListener.pause = false;
+        if (musicManager != null) musicManager.StopMusic();
 
-    // Load Start Menu scene
-    SceneManager.LoadScene("StartMenu");
-}
+        SceneManager.LoadScene("StartMenu");
+    }
 
     private void SetMenuVisible(bool visible, bool setSelection)
     {
