@@ -16,6 +16,10 @@ public class PlayerGun : MonoBehaviour
     public float bulletSpeed = 28f;
     public float shootCooldown = 0.12f;
 
+    [Header("Sound")]
+    public AudioSource gunAudio;
+    public AudioClip bulletShootSound;
+
     // --- NEW: ammo system ---
     public int maxAmmo = 3;          // maximum 3 shots
     private int currentAmmo = 1;     // start with 1 bullet
@@ -61,6 +65,9 @@ public class PlayerGun : MonoBehaviour
     public void Shoot()
     {
         if (!HasGun || bulletPrefab == null) return;
+
+        if (gunAudio != null && bulletShootSound != null)
+        gunAudio.PlayOneShot(bulletShootSound, 1f);
 
         // Find a safe spawn point (muzzle if assigned, else player + small offset)
         Vector3 spawnPos;
