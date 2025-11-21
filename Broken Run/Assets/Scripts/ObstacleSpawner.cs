@@ -212,7 +212,7 @@ public class ObstacleSpawner : MonoBehaviour
         {
             // For ground/ceiling obstacles
             float obstacleOffset = gravityFlipped ? -0.5f : 0.5f;
-            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + obstacleOffset, 0);
+            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + obstacleOffset, 0); // 
         }
 
         GameObject obj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
@@ -235,27 +235,4 @@ public class ObstacleSpawner : MonoBehaviour
 
    
     }
-
-    // deleted
-    // private void ShowShieldTip()
-    // {
-    //     if (shieldTipPanel != null)
-    //     {
-    //         shieldTipPanel.SetActive(true);
-    //         StartCoroutine(HideShieldTipAfterDelay());
-    //     }
-    // }
-
-    // private IEnumerator HideShieldTipAfterDelay()
-    // {
-    //     yield return new WaitForSeconds(shieldTipDuration);
-    //     if (shieldTipPanel != null)
-    //     {
-    //         shieldTipPanel.SetActive(false);
-    //     }
-    // }
-
-    // private IEnumerator DelayShieldTip(){
-    //     yield return new WaitForSeconds(shieldTipDelay);
-    // }
 }
