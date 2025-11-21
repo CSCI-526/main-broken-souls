@@ -5245,6 +5245,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   baseMoveSpeed: 5
   baseJumpForce: 14
   speedScaleFactor: 0.1

@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float minX = -1f;
     public float maxX = 1f;
     public LayerMask groundLayer;
+    public LayerMask obstacleLayer;
 
     [Header("Base Movement Settings")]
     public float baseMoveSpeed = 5f;
@@ -120,8 +121,12 @@ public class PlayerController : MonoBehaviour
         float skinWidth = 0.01f;
         Vector2 feetDir = gravityFlipped ? Vector2.up : Vector2.down;
         Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + feetDir * (playerCollider.size.y / 2 + skinWidth);
-        Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f);
-        isGrounded = Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer);
+        Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.1f); // slightly taller
+
+        bool groundedOnFloor = Physics2D.OverlapBox(boxCenter, boxSize, 0f, groundLayer);
+        bool groundedOnObstacle = Physics2D.OverlapBox(boxCenter, boxSize, 0f, obstacleLayer);
+
+        isGrounded = groundedOnFloor || groundedOnObstacle;
 
         // --- INPUTS ---
         bool rawDownHold = keyboard.downArrowKey.isPressed;
@@ -414,7 +419,7 @@ private IEnumerator SlowMotionRoutine()
             // visualize the feet probe toward "gravity direction"
             Vector2 feetDir = gravityFlipped ? Vector2.up : Vector2.down;
             Vector2 boxCenter = (Vector2)transform.position + playerCollider.offset + feetDir * (playerCollider.size.y / 2 + skinWidth);
-            Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.05f);
+            Vector2 boxSize = new Vector2(playerCollider.size.x * 0.9f, 0.1f);
             Gizmos.color = Color.red;
             Gizmos.DrawCube(boxCenter, boxSize);
         }
@@ -435,3 +440,4 @@ private IEnumerator SlowMotionRoutine()
 }
 
 }
+
