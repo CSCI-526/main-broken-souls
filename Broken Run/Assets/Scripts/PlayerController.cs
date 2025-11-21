@@ -68,6 +68,10 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded = false;
     private bool isCrouching = false;
 
+    [Header("Fall Death")]
+    public float deathY = -10f;               // set in Inspector
+    public GameOverUI gameOverUI;  
+
     [Header("Slow Motion Power-Up")]
     public bool isSlowMoActive = false;
     public float slowMoScale = 0.5f;      // how much slower the world runs (0.5 = half speed)
@@ -114,6 +118,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        CheckFallDeath();
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
@@ -174,6 +179,14 @@ public class PlayerController : MonoBehaviour
         // --- CROUCH ANIMATION ---
         HandleCrouchAnimation();
     }
+
+    void CheckFallDeath()
+{
+    if (transform.position.y < deathY)
+    {
+        Die();
+    }
+}
 
     private void HandleCrouchAnimation()
     {
@@ -294,6 +307,23 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 0f;
         }
     }
+
+    void Die()
+{
+    // Stop the player so he cannot move or fall faster
+    rb.linearVelocity = Vector2.zero;
+    rb.isKinematic = true;
+
+    // Disable movement script immediately
+    this.enabled = false;
+
+    // Show game over screen
+    if (gameOverUI != null)
+        gameOverUI.ShowGameOver();
+
+    // Freeze game
+    Time.timeScale = 0f;
+}
 
     public bool CanTakeDamage()
     {

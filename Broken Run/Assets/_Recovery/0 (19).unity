@@ -5275,8 +5275,6 @@ MonoBehaviour:
   maxEffectDuration: 15
   image: {fileID: 1476514044}
   shieldVisual: {fileID: 591615900}
-  deathY: -10
-  gameOverUI: {fileID: 408273362}
   isSlowMoActive: 0
   slowMoScale: 0.5
   slowMoDuration: 10
