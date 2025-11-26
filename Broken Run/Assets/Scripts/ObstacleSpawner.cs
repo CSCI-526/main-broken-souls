@@ -1,108 +1,4 @@
-// using UnityEngine;
-
-// public class ObstacleSpawner : MonoBehaviour
-// {
-//     [Header("Obstacles")]
-//     public GameObject[] obstaclePrefabs;
-
-//     [Header("Shield Power-Up")]
-//     public GameObject shieldPrefab;        // Drag your Shield prefab here
-//     [Range(0f, 1f)] public float shieldSpawnChance = 0.1f; // 10% chance per spawn
-
-//     [Header("References")]
-//     public Transform player;
-//     public EndlessGround groundManager;
-
-//     [Header("Spawn Settings")]
-//     public float spawnDistance = 20f;
-//     public float spawnInterval = 2f;
-
-//     private float timer;
-
-//     void Update()
-//     {
-//         timer += Time.deltaTime;
-//         if (timer >= spawnInterval)
-//         {
-//             timer = 0f;
-//             SpawnObject();
-//         }
-//     }
-
-//     void SpawnObject()
-//     {
-//         GameObject prefabToSpawn = null;
-//         bool isShield = false;
-
-//         // Decide: spawn shield or obstacle
-//         if (Random.value < shieldSpawnChance && shieldPrefab != null)
-//         {
-//             prefabToSpawn = shieldPrefab;
-//             isShield = true;
-//         }
-//         else
-//         {
-//             prefabToSpawn = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
-//         }
-
-//         if (prefabToSpawn == null) return;
-
-//         float spawnX = player.position.x + spawnDistance;
-
-//         // Find ground tile under spawnX
-//         Transform tileToSpawnOn = null;
-//         foreach (var tile in groundManager.groundTiles)
-//         {
-//             if (tile == null) continue;
-//             float left = tile.position.x - groundManager.tileWidth / 2f;
-//             float right = tile.position.x + groundManager.tileWidth / 2f;
-//             if (spawnX >= left && spawnX <= right)
-//             {
-//                 tileToSpawnOn = tile;
-//                 break;
-//             }
-//         }
-
-//         if (tileToSpawnOn == null) return;
-
-//         Vector3 spawnPos;
-
-//         if (isShield)
-//         {
-//             // Spawn shield near player's Y position (~3.8)
-//             spawnPos = new Vector3(spawnX, player.position.y + Random.Range(-0.5f, 0.5f), 0);
-//         }
-//         else
-//         {
-//             // Spawn obstacle slightly above ground
-//             spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + 0.5f, 0);
-//         }
-
-//         GameObject obj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-
-//         // Attach mover so shield & obstacles scroll with ground
-//         Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-//         if (rb == null) rb = obj.AddComponent<Rigidbody2D>();
-//         rb.bodyType = RigidbodyType2D.Kinematic;
-
-//         ObstacleMover mover = obj.AddComponent<ObstacleMover>();
-//         mover.speed = groundManager.scrollSpeed;
-//         mover.despawnX = player.position.x - 20f;
-
-//         // Example: attach coin above obstacles only
-//         if (!isShield && groundManager.coinPrefab != null && Random.value < 0.5f)
-//         {
-//             Vector3 coinPos = obj.transform.position + Vector3.up * 2.5f;
-//             GameObject coin = Instantiate(groundManager.coinPrefab, coinPos, Quaternion.identity);
-//             coin.transform.SetParent(obj.transform);
-//         }
-//     }
-// }
-
-
-
 using UnityEngine;
-using System.Collections;
 
 public class ObstacleSpawner : MonoBehaviour
 {
@@ -114,6 +10,11 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject shieldPrefab;
     [Range(0f, 1f)] public float shieldSpawnChance = 0.1f;
 
+    [Header("Shop Settings")]
+    public GameObject shopPrefab;             // Shop to spawn
+    public int shopScoreInterval = 300;
+    private int nextShopScore = 300;
+
     [Header("References")]
     public Transform player;
     public EndlessGround groundManager;
@@ -123,20 +24,36 @@ public class ObstacleSpawner : MonoBehaviour
     public float spawnInterval = 5f;
 
     [Header("Air Obstacle Settings")]
-    public float airOffset = 2.5f;      // How high above ground for air obstacles
-    public float airSpawnChance = 0.4f; // Chance to spawn in air instead of ground
+    public float airOffset = 2.5f;      // Height above ground
+    public float airSpawnChance = 0.4f; // Chance for air obstacle
 
     private float timer;
 
-    void Update()
+void Update()
+{
+    // SHOP CHECK FIRST
+    if (ScoreManager.Instance != null &&
+        ScoreManager.Instance.CurrentScore >= nextShopScore)
     {
-        timer += Time.deltaTime;
-        if (timer >= spawnInterval)
-        {
-            timer = 0f;
-            SpawnObject();
-        }
+        SpawnShop();
+        nextShopScore += shopScoreInterval;
+        timer = 0f;  // Reset timer so no immediate obstacle
+        return;      // <-- IMPORTANT: skip obstacle spawn this frame
     }
+
+    // NORMAL OBSTACLE SPAWN
+    timer += Time.deltaTime;
+    if (timer >= spawnInterval)
+    {
+        timer = 0f;
+        SpawnObject();
+    }
+}
+
+
+    // ======================================================
+    // ========== MAIN OBSTACLE + SHIELD SPAWNER ============
+    // ======================================================
 
     void SpawnObject()
     {
@@ -144,11 +61,10 @@ public class ObstacleSpawner : MonoBehaviour
         bool isShield = false;
         bool spawnAir = false;
 
-        // Check if gravity is flipped from PlayerController
         PlayerController pc = player.GetComponent<PlayerController>();
-        bool gravityFlipped = (pc != null && pc.IsGravityFlipped());
+        bool gravityFlipped = pc != null && pc.IsGravityFlipped();
 
-        // Decide shield first
+        // SHIELD FIRST
         if (Random.value < shieldSpawnChance && shieldPrefab != null)
         {
             prefabToSpawn = shieldPrefab;
@@ -156,7 +72,6 @@ public class ObstacleSpawner : MonoBehaviour
         }
         else
         {
-            // Decide air vs ground obstacle
             spawnAir = airObstaclePrefabs.Length > 0 && Random.value < airSpawnChance;
             if (spawnAir)
                 prefabToSpawn = airObstaclePrefabs[Random.Range(0, airObstaclePrefabs.Length)];
@@ -168,65 +83,97 @@ public class ObstacleSpawner : MonoBehaviour
 
         float spawnX = player.position.x + spawnDistance;
 
-        // NEW: Choose correct tiles based on gravity state
-        Transform[] tilesToCheck = gravityFlipped ? groundManager.ceilingTiles : groundManager.groundTiles;
-        
-        // Find tile at spawnX
-        Transform tileToSpawnOn = null;
-        foreach (var tile in tilesToCheck)
-        {
-            if (tile == null) continue;
-            float left = tile.position.x - groundManager.tileWidth / 2f;
-            float right = tile.position.x + groundManager.tileWidth / 2f;
-            if (spawnX >= left && spawnX <= right)
-            {
-                tileToSpawnOn = tile;
-                break;
-            }
-        }
+        Transform[] tiles = gravityFlipped ? groundManager.ceilingTiles : groundManager.groundTiles;
 
+        Transform tileToSpawnOn = GetTileAtX(tiles, spawnX);
         if (tileToSpawnOn == null) return;
 
-        // Determine Y position
         Vector3 spawnPos;
+
         if (isShield)
         {
             spawnPos = new Vector3(spawnX, player.position.y + Random.Range(-0.5f, 0.5f), 0);
-            // StartCoroutine(DelayShieldTip()); //delete
-            // ShowShieldTip();
-            
         }
         else if (spawnAir)
         {
-            // For air obstacles, adjust based on gravity
-            float airOffsetDirection = gravityFlipped ? -airOffset : airOffset;
-            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + airOffsetDirection, 0);
+            float airDir = gravityFlipped ? -airOffset : airOffset;
+            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + airDir, 0);
         }
         else
         {
-            // For ground/ceiling obstacles
-            float obstacleOffset = gravityFlipped ? -0.5f : 0.5f;
-            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + obstacleOffset, 0); // 
+            float offset = gravityFlipped ? -0.5f : 0.5f;
+            spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + offset, 0);
         }
 
         GameObject obj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
 
-        // Flip obstacle sprite if on ceiling
         if (gravityFlipped && !isShield)
-        {
             obj.transform.localScale = new Vector3(obj.transform.localScale.x, -Mathf.Abs(obj.transform.localScale.y), obj.transform.localScale.z);
-        }
 
-        // Rigidbody2D so it moves with the ground
+        AddMover(obj);
+    }
+
+    // ======================================================
+    // ================ SHOP SPAWN FUNCTION =================
+    // ======================================================
+
+    void SpawnShop()
+    {
+        if (shopPrefab == null) return;
+
+        PlayerController pc = player.GetComponent<PlayerController>();
+        bool gravityFlipped = pc != null && pc.IsGravityFlipped();
+
+        float spawnX = player.position.x + spawnDistance;
+
+        Transform[] tiles = gravityFlipped ? groundManager.ceilingTiles : groundManager.groundTiles;
+
+        Transform tileToSpawnOn = GetTileAtX(tiles, spawnX);
+        if (tileToSpawnOn == null) return;
+
+        float offset = gravityFlipped ? -0.5f : 0.5f;
+        Vector3 spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + offset, 0);
+
+        GameObject shop = Instantiate(shopPrefab, spawnPos, Quaternion.identity);
+
+        if (gravityFlipped)
+            shop.transform.localScale = new Vector3(1, -1, 1);
+
+        AddMover(shop);
+        if (shop.GetComponent<ShopTrigger>() == null)
+            shop.AddComponent<ShopTrigger>();
+
+        Debug.Log("SHOP SPAWNED at score " + nextShopScore);
+    }
+
+    // ======================================================
+    // ================= UTILITY FUNCTIONS ==================
+    // ======================================================
+
+    Transform GetTileAtX(Transform[] tiles, float x)
+    {
+        foreach (var tile in tiles)
+        {
+            if (tile == null) continue;
+
+            float left = tile.position.x - groundManager.tileWidth / 2f;
+            float right = tile.position.x + groundManager.tileWidth / 2f;
+
+            if (x >= left && x <= right)
+                return tile;
+        }
+        return null;
+    }
+
+    void AddMover(GameObject obj)
+    {
         Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
         if (rb == null) rb = obj.AddComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
 
-        // ObstacleMover scrolls the object left
-        ObstacleMover mover = obj.AddComponent<ObstacleMover>();
+        ObstacleMover mover = obj.GetComponent<ObstacleMover>();
+        if (mover == null) mover = obj.AddComponent<ObstacleMover>();
         mover.speed = groundManager.scrollSpeed;
         mover.despawnX = player.position.x - 20f;
-
-   
     }
 }

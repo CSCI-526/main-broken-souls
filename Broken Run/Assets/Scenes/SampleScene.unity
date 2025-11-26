@@ -2507,6 +2507,8 @@ MonoBehaviour:
   - {fileID: 1153973026827681992, guid: 3f3fae7042a7e413ab8c8509f3c1980c, type: 3}
   shieldPrefab: {fileID: 2337018230492591688, guid: 28c96843eaa92d846a4e736cc57aeeaa, type: 3}
   shieldSpawnChance: 0.15
+  shopPrefab: {fileID: 8631656774607130382, guid: 0516af010806be14d9586bfe022ee242, type: 3}
+  shopScoreInterval: 300
   player: {fileID: 1256906662}
   groundManager: {fileID: 967972291}
   spawnDistance: 16
