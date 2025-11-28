@@ -44,6 +44,9 @@ public class GameOverUI : MonoBehaviour
 
         if (ScoreManager.Instance != null && ScoreManager.Instance.scoreText != null)
             ScoreManager.Instance.scoreText.gameObject.SetActive(false);
+
+        // Send analytics data
+        SendAnalytics(finalScore);
     }
 
     public void RestartGame()
@@ -55,6 +58,70 @@ public class GameOverUI : MonoBehaviour
         if (ScoreManager.Instance != null && ScoreManager.Instance.scoreText != null)
             ScoreManager.Instance.scoreText.gameObject.SetActive(true);
 
+        // Reset cause of death tracker for new game
+        CauseOfDeathTracker.Reset();
+
+        // Start new analytics session
+        if (EnhancedAnalytics.Instance != null)
+        {
+            EnhancedAnalytics.Instance.StartNewGameSession();
+        }
+
+        // Start new session for old analytics systems
+        GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
+        if (formAnalytics != null)
+        {
+            formAnalytics.StartNewSession();
+        }
+        else if (SurvivalAnalytics.Instance != null)
+        {
+            SurvivalAnalytics.Instance.StartNewSession();
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void SendAnalytics(int finalScore)
+    {
+        // Get game speed
+        float gameSpeed = 5f;
+        EndlessGround ground = FindObjectOfType<EndlessGround>();
+        if (ground != null)
+        {
+            gameSpeed = ground.scrollSpeed;
+        }
+
+        // Get survival time
+        float survivalTime = Time.timeSinceLevelLoad;
+
+        // Get cause of death
+        string causeOfDeath = CauseOfDeathTracker.LastCauseOfDeath;
+
+        // Send to old analytics systems (for backwards compatibility)
+        GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
+        if (formAnalytics != null)
+        {
+            formAnalytics.OnPlayerDeath(finalScore, gameSpeed);
+        }
+        else if (SurvivalAnalytics.Instance != null)
+        {
+            SurvivalAnalytics.Instance.OnPlayerDeath(finalScore, gameSpeed);
+        }
+
+        // Send to Enhanced Analytics
+        if (EnhancedAnalytics.Instance != null)
+        {
+            Debug.Log($"📊 Sending Enhanced Analytics: Score={finalScore}, Time={survivalTime:F2}s, Speed={gameSpeed:F2}, Cause={causeOfDeath}");
+            EnhancedAnalytics.Instance.OnPlayerDeath(
+                causeOfDeath,
+                survivalTime,
+                finalScore,
+                gameSpeed
+            );
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ EnhancedAnalytics not found! Did you add it to the scene?");
+        }
     }
 }
