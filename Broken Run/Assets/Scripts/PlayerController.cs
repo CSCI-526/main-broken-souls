@@ -41,12 +41,12 @@ public class PlayerController : MonoBehaviour
     public float shieldDuration = 10f;
     public float shieldBounceForce = 6f;
 
-
     [Header("UI")]
     public HealthBar healthBar;
     [SerializeField] public ModeUIController modeUI; // Drag your ModeUIController here
     //new
     [SerializeField] public PlayerHealthCover coverSync;
+    public GameObject HBar;
 
     [Header("Damage")]
     public float damageCooldown = 0.5f;
@@ -63,6 +63,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Shield Visual")]
     public GameObject shieldVisual;
+
+    [Header("Animation")]
+    public Animator animator;                         // NEW：Animator Reference
+    private static readonly int AnimStateHash = Animator.StringToHash("AnimState");
+
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool isGrounded = false;
@@ -76,6 +81,9 @@ public class PlayerController : MonoBehaviour
     public bool isSlowMoActive = false;
     public float slowMoScale = 0.5f;      // how much slower the world runs (0.5 = half speed)
     public float slowMoDuration = 10f;  
+
+    [Header("Sprite Transform")]
+    public Transform spriteTransform; 
 
     private Coroutine shieldRoutine;
 
@@ -95,15 +103,18 @@ public class PlayerController : MonoBehaviour
         if (playerCollider == null)
             playerCollider = GetComponent<BoxCollider2D>();
 
+        // NEW: FIND Animator
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
         originalGravityScale = rb.gravityScale;
         SetPlayerColor(false);
     }
 
     void Start()
     {
-
-        sr = GetComponent<SpriteRenderer>();
-        normalColor = sr.color;
+        sr = HBar.GetComponent<SpriteRenderer>();
+        sr.color = normalColor;
         moveSpeed = baseMoveSpeed;
         jumpForce = baseJumpForce;
 
@@ -178,40 +189,86 @@ public class PlayerController : MonoBehaviour
 
         // --- CROUCH ANIMATION ---
         HandleCrouchAnimation();
+
+        // --- UPDATE ANIMATION ---
+        UpdateAnimationState();
+    }
+
+    // NEW ANIMATION UPDATE
+    private void UpdateAnimationState()
+    {
+        if (animator == null) return;
+
+        int state = 0; // 0 = Ground
+        float vy = rb.linearVelocity.y;
+
+
+        float gravityDir = -Mathf.Sign(rb.gravityScale);
+
+        if (!isGrounded)
+        {
+            bool isFalling = Mathf.Sign(vy) == gravityDir && Mathf.Abs(vy) > 0.05f;
+            bool isRising  = Mathf.Sign(vy) == -gravityDir && Mathf.Abs(vy) > 0.05f;
+
+            if (isRising)
+                state = 1;  // Jump
+            else if (isFalling)
+                state = 2;  // Fall
+        }
+
+        if (isGrounded && isCrouching)
+        {
+            state = 3;      // Crouch
+        }
+
+        animator.SetInteger(AnimStateHash, state);
     }
 
     void CheckFallDeath()
-{
-    if (transform.position.y < deathY)
     {
-        Die();
+        if (transform.position.y < deathY)
+        {
+            Die();
+        }
     }
-}
 
     private void HandleCrouchAnimation()
     {
         if (playerCollider != null)
         {
-            playerCollider.size = Vector2.Lerp(
-                playerCollider.size,
-                isCrouching ? crouchSize : standSize,
-                Time.deltaTime * crouchSmoothSpeed
-            );
+            // playerCollider.size = Vector2.Lerp(
+            //     playerCollider.size,
+            //     isCrouching ? crouchSize : standSize,
+            //     Time.deltaTime * crouchSmoothSpeed
+            // );
 
-            playerCollider.offset = Vector2.Lerp(
-                playerCollider.offset,
-                isCrouching ? crouchOffset : standOffset,
-                Time.deltaTime * crouchSmoothSpeed
-            );
+            // playerCollider.offset = Vector2.Lerp(
+            //     playerCollider.offset,
+            //     isCrouching ? crouchOffset : standOffset,
+            //     Time.deltaTime * crouchSmoothSpeed
+            // );
+
+            playerCollider.size   = isCrouching ? crouchSize   : standSize;
+            playerCollider.offset = isCrouching ? crouchOffset : standOffset;
         }
 
         // Only scale sprite, do NOT move Y position
-        float targetYScale = isCrouching ? crouchSize.y / standSize.y : 1f;
-        sr.transform.localScale = new Vector3(
-            1f,
-            Mathf.Lerp(sr.transform.localScale.y, targetYScale, Time.deltaTime * crouchSmoothSpeed),
-            1f
-        );
+        // float targetYScale = isCrouching ? crouchSize.y / standSize.y : 1f;
+        // spriteTransform.transform.localScale = new Vector3(
+        //     1f,
+        //     Mathf.Lerp(spriteTransform.transform.localScale.y, targetYScale, Time.deltaTime * crouchSmoothSpeed),
+        //     1f
+        // );
+
+        // if (spriteTransform != null)
+        // {
+        //     Vector3 targetPos = isCrouching ? new Vector3(0f, -0.4f, 0f) : Vector3.zero;
+        //     spriteTransform.localPosition = Vector3.Lerp(
+        //         spriteTransform.localPosition,
+        //         targetPos,
+        //         Time.deltaTime * crouchSmoothSpeed
+        //     );
+        // }
     }
 
     // ========= 2b) Minimal RandomEffectRoutine so it compiles =========
@@ -270,6 +327,13 @@ public class PlayerController : MonoBehaviour
         gravityFlipped = on;
         rb.gravityScale = originalGravityScale * (on ? -1f : 1f);
         SetPlayerColor(on || controlsFlipped); // keep red while any effect is active
+        if (spriteTransform != null)
+        {
+            Vector3 s = spriteTransform.localScale;
+            float baseY = Mathf.Abs(s.y);
+            s.y = on ? -baseY : baseY;
+            spriteTransform.localScale = s;
+        }
     }
 
     public void TakeDamage(float amount)
@@ -309,21 +373,21 @@ public class PlayerController : MonoBehaviour
     }
 
     void Die()
-{
-    // Stop the player so he cannot move or fall faster
-    rb.linearVelocity = Vector2.zero;
-    rb.isKinematic = true;
+    {
+        // Stop the player so he cannot move or fall faster
+        rb.linearVelocity = Vector2.zero;
+        rb.isKinematic = true;
 
-    // Disable movement script immediately
-    this.enabled = false;
+        // Disable movement script immediately
+        this.enabled = false;
 
-    // Show game over screen
-    if (gameOverUI != null)
-        gameOverUI.ShowGameOver();
+        // Show game over screen
+        if (gameOverUI != null)
+            gameOverUI.ShowGameOver();
 
-    // Freeze game
-    Time.timeScale = 0f;
-}
+        // Freeze game
+        Time.timeScale = 0f;
+    }
 
     public bool CanTakeDamage()
     {
@@ -341,105 +405,104 @@ public class PlayerController : MonoBehaviour
         jumpForce = baseJumpForce + worldSpeed * (speedScaleFactor * 0.001f);
     }
 
-   private void SetPlayerColor(bool anyFlip)
-{
-    if (sr != null)
+    private void SetPlayerColor(bool anyFlip)
     {
-        if (gravityFlipped)             // gravity flip has priority
-            sr.color = gravityFlippedColor;
-        else if (controlsFlipped)       // control flip
-            sr.color = flippedColor;
-        else
-            sr.color = normalColor;     // no flip
-    }
-}
-
-public void ActivateShield()
-{
-    // If shield is already active, extend duration by 10s
-    if (hasShield && shieldRoutine != null)
-    {
-        remainingShieldTime += 10f;
-        Debug.Log($"🛡 Shield extended by 10s! Remaining: {remainingShieldTime:F1}s");
-        return;
+        if (sr != null)
+        {
+            if (gravityFlipped)             // gravity flip has priority
+                sr.color = gravityFlippedColor;
+            else if (controlsFlipped)       // control flip
+                sr.color = flippedColor;
+            else
+                sr.color = normalColor;     // no flip
+        }
     }
 
-    // Otherwise, activate a new shield
-    hasShield = true;
-    remainingShieldTime = shieldDuration;
-
-    Debug.Log("🛡 Shield activated!");
-
-    if (shieldVisual != null)
-        shieldVisual.SetActive(true);
-
-    shieldRoutine = StartCoroutine(ShieldTimer());
-}
-
-private float remainingShieldTime;
-
-private IEnumerator ShieldTimer()
-{
-    while (remainingShieldTime > 0f)
+    public void ActivateShield()
     {
-        // ❌ Removed all blink logic
+        // If shield is already active, extend duration by 10s
+        if (hasShield && shieldRoutine != null)
+        {
+            remainingShieldTime += 10f;
+            Debug.Log($"🛡 Shield extended by 10s! Remaining: {remainingShieldTime:F1}s");
+            return;
+        }
 
-        remainingShieldTime -= 0.25f;
-        yield return new WaitForSeconds(0.25f);
+        // Otherwise, activate a new shield
+        hasShield = true;
+        remainingShieldTime = shieldDuration;
+
+        Debug.Log("🛡 Shield activated!");
+
+        if (shieldVisual != null)
+            shieldVisual.SetActive(true);
+
+        shieldRoutine = StartCoroutine(ShieldTimer());
     }
 
-    hasShield = false;
-    shieldRoutine = null;
-    Debug.Log("🕒 Shield expired");
+    private float remainingShieldTime;
 
-    if (shieldVisual != null)
-        shieldVisual.SetActive(false);
-}
-
-public void DeactivateShield()
-{
-    hasShield = false;
-
-    if (shieldRoutine != null)
+    private IEnumerator ShieldTimer()
     {
-        StopCoroutine(shieldRoutine);
+        while (remainingShieldTime > 0f)
+        {
+            // ❌ Removed all blink logic
+
+            remainingShieldTime -= 0.25f;
+            yield return new WaitForSeconds(0.25f);
+        }
+
+        hasShield = false;
         shieldRoutine = null;
+        Debug.Log("🕒 Shield expired");
+
+        if (shieldVisual != null)
+            shieldVisual.SetActive(false);
     }
 
-    remainingShieldTime = 0f;
-
-    if (shieldVisual != null)
-        shieldVisual.SetActive(false);
-
-    Debug.Log("🧊 Shield deactivated manually!");
-}
-public void ActivateSlowMotion()
-{
-    if (isSlowMoActive) return; // prevent overlapping effects
-    StartCoroutine(SlowMotionRoutine());
-}
-
-private IEnumerator SlowMotionRoutine()
-{
-    isSlowMoActive = true;
-    Time.timeScale = slowMoScale;
-    Time.fixedDeltaTime = 0.02f * Time.timeScale;
-    Debug.Log("🌀 Slow Motion Activated!");
-
-    yield return new WaitForSecondsRealtime(slowMoDuration);
-
-    // ✅ Check if player is still alive before restoring time
-    if (healthBar != null && healthBar.healthSlider.value > 0)
+    public void DeactivateShield()
     {
-        Time.timeScale = 1f;
-        Time.fixedDeltaTime = 0.02f;
+        hasShield = false;
+
+        if (shieldRoutine != null)
+        {
+            StopCoroutine(shieldRoutine);
+            shieldRoutine = null;
+        }
+
+        remainingShieldTime = 0f;
+
+        if (shieldVisual != null)
+            shieldVisual.SetActive(false);
+
+        Debug.Log("🧊 Shield deactivated manually!");
     }
 
-    isSlowMoActive = false;
-    Debug.Log("⏱️ Slow Motion Ended!");
-}
+    public void ActivateSlowMotion()
+    {
+        if (isSlowMoActive) return; // prevent overlapping effects
+        StartCoroutine(SlowMotionRoutine());
+    }
 
+    private IEnumerator SlowMotionRoutine()
+    {
+        isSlowMoActive = true;
+        Time.timeScale = slowMoScale;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        Debug.Log("🌀 Slow Motion Activated!");
 
+        yield return new WaitForSecondsRealtime(slowMoDuration);
+
+        // ✅ Check if player is still alive before restoring time
+        if (healthBar != null && healthBar.healthSlider.value > 0)
+        {
+            Time.timeScale = 1f;
+            Time.fixedDeltaTime = 0.02f;
+        }
+
+        isSlowMoActive = false;
+        Debug.Log("⏱️ Slow Motion Ended!");
+    }
 
     private void OnDrawGizmos()
     {
@@ -460,14 +523,13 @@ private IEnumerator SlowMotionRoutine()
     {
         return gravityFlipped;
     }
+
     private void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.CompareTag("SlowMoPowerUp"))
     {
-        ActivateSlowMotion();
-        Destroy(other.gameObject); // remove power-up after use
+        if (other.CompareTag("SlowMoPowerUp"))
+        {
+            ActivateSlowMotion();
+            Destroy(other.gameObject); // remove power-up after use
+        }
     }
 }
-
-}
-
