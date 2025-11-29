@@ -20,7 +20,8 @@ public float randomYJitter = 0.1f;
 
 [Header("Collision Checks")]
 public LayerMask obstacleLayer;             // assign all obstacles (ground & air)
-public Vector2 coinCheckSize = new Vector2(0.5f, 0.5f);
+public Vector2 coinCheckSize = new Vector2(1.5f, 1.5f);  // Increased to check larger area
+public float horizontalCheckRange = 2f;    // Check obstacles within this X range
 
 WaitForSeconds wait;
 
@@ -69,18 +70,56 @@ void TrySpawnCoin()
     float signedYOffset = flipped ? -Mathf.Abs(yOffset) : Mathf.Abs(yOffset);
     Vector3 pos = new Vector3(spawnX, chosen.position.y + signedYOffset, 0f);
 
-    // attempt to find free space if obstacles are present
-    int attempts = 10;             // more attempts
-    float step = 0.3f;             // move per attempt
-    for (int i = 0; i < attempts; i++)
+    // Check for obstacles in a wider area (both horizontally and vertically)
+    // This prevents coins from spawning too close to obstacles
+    Collider2D[] nearbyObstacles = Physics2D.OverlapBoxAll(
+        pos, 
+        new Vector2(horizontalCheckRange, coinCheckSize.y), 
+        0f, 
+        obstacleLayer
+    );
+    
+    // If there are obstacles nearby, try to find a safe spot
+    if (nearbyObstacles.Length > 0)
     {
-        Collider2D hit = Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer);
-        if (hit == null) break; // free spot found
-        pos.y += flipped ? -step : step;
+        // Try moving vertically to find free space
+        int attempts = 15;             // more attempts
+        float step = 0.4f;             // larger step for better spacing
+        bool foundSpot = false;
+        
+        for (int i = 0; i < attempts; i++)
+        {
+            // Check if this position is clear
+            Collider2D hit = Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer);
+            if (hit == null)
+            {
+                // Also check horizontally to ensure no obstacles nearby
+                Collider2D[] horizontalCheck = Physics2D.OverlapBoxAll(
+                    pos, 
+                    new Vector2(horizontalCheckRange, coinCheckSize.y * 0.5f), 
+                    0f, 
+                    obstacleLayer
+                );
+                if (horizontalCheck.Length == 0)
+                {
+                    foundSpot = true;
+                    break;
+                }
+            }
+            // Move up/down to find free space
+            pos.y += flipped ? -step : step;
+        }
+        
+        // If we couldn't find a safe spot, skip spawning this coin
+        if (!foundSpot)
+        {
+            return;
+        }
     }
 
-    // final check — skip if blocked
-    if (Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer) != null) return;
+    // Final safety check — skip if still blocked
+    Collider2D finalCheck = Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer);
+    if (finalCheck != null) return;
 
     // add small random jitter
     pos.y += Random.Range(-randomYJitter, randomYJitter);
