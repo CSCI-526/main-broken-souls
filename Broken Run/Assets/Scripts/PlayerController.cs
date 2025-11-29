@@ -390,15 +390,9 @@ public class PlayerController : MonoBehaviour
         if (gameOverUI != null)
             gameOverUI.ShowGameOver();
 
-<<<<<<< HEAD
-    // Freeze game
-    Time.timeScale = 0f;
-}   
-=======
         // Freeze game
         Time.timeScale = 0f;
     }
->>>>>>> 38486221ba239c978ad87f775a5fdcff7050037c
 
     public bool CanTakeDamage()
     {
