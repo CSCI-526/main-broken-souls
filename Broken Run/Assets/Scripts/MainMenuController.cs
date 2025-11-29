@@ -131,22 +131,22 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
-        // // Check if tutorial has been completed
-        // int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
-        // bool tutorialCompleted = tutorialStatus == 1;
+        // Check if tutorial has been completed
+        int tutorialStatus = PlayerPrefs.GetInt("TutorialCompleted", 0);
+        bool tutorialCompleted = tutorialStatus == 1;
         
-        // Debug.Log($"[MainMenu] PlayGame clicked - Tutorial status: {tutorialStatus} (0=not completed, 1=completed)");
+        Debug.Log($"[MainMenu] PlayGame clicked - Tutorial status: {tutorialStatus} (0=not completed, 1=completed)");
         
-        // if (!tutorialCompleted)
-        // {
-        //     // Tutorial not completed - show popup message
-        //     Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Showing prompt...");
-        //     ShowTutorialPrompt();
-        //     return;
-        // }
+        if (!tutorialCompleted)
+        {
+            // Tutorial not completed - show popup message
+            Debug.Log("[MainMenu] Cannot play game - tutorial must be completed first! Showing prompt...");
+            ShowTutorialPrompt();
+            return;
+        }
         
-        // // Tutorial completed - allow playing the game
-        // Debug.Log("[MainMenu] Tutorial completed - loading game scene");
+        // Tutorial completed - allow playing the game
+        Debug.Log("[MainMenu] Tutorial completed - loading game scene");
         StartCoroutine(FadeOutAndLoadScene("SampleScene"));
     }
     
