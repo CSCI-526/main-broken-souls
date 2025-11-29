@@ -323,7 +323,7 @@ public class PlayerController : MonoBehaviour
 
     // Freeze game
     Time.timeScale = 0f;
-}
+}   
 
     public bool CanTakeDamage()
     {
@@ -334,6 +334,28 @@ public class PlayerController : MonoBehaviour
     {
         lastDamageTime = Time.time;
     }
+
+    public void SmoothAdjustMoveSpeed(float targetSpeed, float duration)
+{
+    StopCoroutine(nameof(SmoothMoveSpeedCoroutine));
+    StartCoroutine(SmoothMoveSpeedCoroutine(targetSpeed, duration));
+}
+
+private IEnumerator SmoothMoveSpeedCoroutine(float targetSpeed, float duration)
+{
+    float startSpeed = moveSpeed;
+    float elapsed = 0f;
+
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        moveSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
+        yield return null;
+    }
+
+    moveSpeed = targetSpeed;
+}
+
 
     public void AdjustToWorldSpeed(float worldSpeed)
     {

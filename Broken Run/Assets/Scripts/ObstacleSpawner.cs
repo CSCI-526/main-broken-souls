@@ -10,11 +10,6 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject shieldPrefab;
     [Range(0f, 1f)] public float shieldSpawnChance = 0.1f;
 
-    [Header("Shop Settings")]
-    public GameObject shopPrefab;             // Shop to spawn
-    public int shopScoreInterval = 300;
-    private int nextShopScore = 300;
-
     [Header("References")]
     public Transform player;
     public EndlessGround groundManager;
@@ -31,16 +26,7 @@ public class ObstacleSpawner : MonoBehaviour
 
 void Update()
 {
-    // SHOP CHECK FIRST
-    if (ScoreManager.Instance != null &&
-        ScoreManager.Instance.CurrentScore >= nextShopScore)
-    {
-        SpawnShop();
-        nextShopScore += shopScoreInterval;
-        timer = 0f;  // Reset timer so no immediate obstacle
-        return;      // <-- IMPORTANT: skip obstacle spawn this frame
-    }
-
+  
     // NORMAL OBSTACLE SPAWN
     timer += Time.deltaTime;
     if (timer >= spawnInterval)
@@ -113,39 +99,7 @@ void Update()
         AddMover(obj);
     }
 
-    // ======================================================
-    // ================ SHOP SPAWN FUNCTION =================
-    // ======================================================
-
-    void SpawnShop()
-    {
-        if (shopPrefab == null) return;
-
-        PlayerController pc = player.GetComponent<PlayerController>();
-        bool gravityFlipped = pc != null && pc.IsGravityFlipped();
-
-        float spawnX = player.position.x + spawnDistance;
-
-        Transform[] tiles = gravityFlipped ? groundManager.ceilingTiles : groundManager.groundTiles;
-
-        Transform tileToSpawnOn = GetTileAtX(tiles, spawnX);
-        if (tileToSpawnOn == null) return;
-
-        float offset = gravityFlipped ? -0.5f : 0.5f;
-        Vector3 spawnPos = new Vector3(spawnX, tileToSpawnOn.position.y + offset, 0);
-
-        GameObject shop = Instantiate(shopPrefab, spawnPos, Quaternion.identity);
-
-        if (gravityFlipped)
-            shop.transform.localScale = new Vector3(1, -1, 1);
-
-        AddMover(shop);
-        if (shop.GetComponent<ShopTrigger>() == null)
-            shop.AddComponent<ShopTrigger>();
-
-        Debug.Log("SHOP SPAWNED at score " + nextShopScore);
-    }
-
+   
     // ======================================================
     // ================= UTILITY FUNCTIONS ==================
     // ======================================================
