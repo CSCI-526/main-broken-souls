@@ -247,9 +247,14 @@ public class PlayerController : MonoBehaviour
             //     isCrouching ? crouchOffset : standOffset,
             //     Time.deltaTime * crouchSmoothSpeed
             // );
-
-            playerCollider.size   = isCrouching ? crouchSize   : standSize;
-            playerCollider.offset = isCrouching ? crouchOffset : standOffset;
+            Vector2 targetSize   = isCrouching ? crouchSize   : standSize;
+            Vector2 targetOffset = isCrouching ? crouchOffset : standOffset;
+            if (gravityFlipped)
+            {
+                targetOffset.y = -targetOffset.y;
+            }
+            playerCollider.size   = targetSize;
+            playerCollider.offset = targetOffset;
         }
 
         // Only scale sprite, do NOT move Y position
