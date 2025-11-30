@@ -42,6 +42,68 @@ public class ModeUIController : MonoBehaviour
         if (flipWarningBanner) flipWarningBanner.SetActive(false);
 
         if (rootGroup == null) rootGroup = GetComponent<CanvasGroup>();
+        
+        // Enhance visibility of all text elements
+        EnhanceTextVisibility();
+    }
+    
+    /// <summary>
+    /// Enhances visibility of all mode warning texts (bold, white, larger)
+    /// </summary>
+    private void EnhanceTextVisibility()
+    {
+        // Enhance timer texts
+        EnhanceTextElement(flipTimerText);
+        EnhanceTextElement(antiGravityTimerText);
+        
+        // Enhance banner label
+        EnhanceTextElement(bannerLabel);
+        
+        // Enhance forecast indicator texts
+        EnhanceTextElement(indicatorLabel);
+        EnhanceTextElement(indicatorCountdown);
+    }
+    
+    /// <summary>
+    /// Helper method to enhance a single text element
+    /// </summary>
+    private void EnhanceTextElement(TextMeshProUGUI textElement)
+    {
+        if (textElement == null) return;
+        
+        // Set text color to bright white
+        textElement.color = Color.white;
+        
+        // Make text bold
+        textElement.fontStyle = FontStyles.Bold;
+        
+        // Set font size based on text type
+        // Forecast texts (indicatorLabel, indicatorCountdown) get smaller size
+        bool isForecastText = (textElement == indicatorLabel || textElement == indicatorCountdown);
+        
+        if (isForecastText)
+        {
+            // Reduced size for forecast texts
+            if (textElement.fontSize < 31)
+            {
+                textElement.fontSize = 31;
+            }
+            else if (textElement.fontSize > 31)
+            {
+                textElement.fontSize = 31;
+            }
+        }
+        else
+        {
+            // Other texts (timers, banners) keep larger size
+            if (textElement.fontSize < 36)
+            {
+                textElement.fontSize = 36;
+            }
+        }
+        
+        // Force update
+        textElement.SetAllDirty();
     }
 
     // ===================== PUBLIC API =====================
@@ -78,6 +140,7 @@ public class ModeUIController : MonoBehaviour
         bannerLabel.text = (activeMode == ModeType.ReversedControls)
             ? "⚠ Controls Reversed!"
             : "⚠ Anti-Gravity Active!";
+        EnhanceTextElement(bannerLabel); // Ensure visibility
         bannerRoutine = StartCoroutine(BannerCo());
     }
 
@@ -119,9 +182,17 @@ public class ModeUIController : MonoBehaviour
         modeIndicatorRoot.SetActive(true);
 
         if (indicatorLabel)
+        {
             indicatorLabel.text = (mode == ModeType.ReversedControls)
                 ? "Incoming: Reversed Controls"
                 : "Incoming: Anti-Gravity";
+            EnhanceTextElement(indicatorLabel); // Ensure visibility
+        }
+        
+        if (indicatorCountdown)
+        {
+            EnhanceTextElement(indicatorCountdown); // Ensure visibility
+        }
 
         float t = seconds;
         while (t > 0f)
@@ -158,6 +229,7 @@ public class ModeUIController : MonoBehaviour
 
         // Now show timer for last 5 seconds
         target.gameObject.SetActive(true);
+        EnhanceTextElement(target); // Ensure visibility when shown
         
         while (t > 0f)
         {

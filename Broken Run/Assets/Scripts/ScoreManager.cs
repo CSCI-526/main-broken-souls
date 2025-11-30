@@ -57,7 +57,11 @@ public class ScoreManager : MonoBehaviour
         
         // Make sure score text is visible at game start
         if (scoreText != null)
+        {
             scoreText.gameObject.SetActive(true);
+            // Enhance text visibility with outline and shadow
+            EnhanceScoreTextVisibility();
+        }
         
         UpdateScoreUI();
 
@@ -119,6 +123,41 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
             scoreText.text = $"Score: {CurrentScore}";
+    }
+
+    /// <summary>
+    /// Enhances score text visibility by making it bold, white, and ensuring good contrast
+    /// Note: For outline/shadow effects, configure them in the Inspector on the TextMeshPro component
+    /// This method ensures the text is at least bold and white for visibility
+    /// </summary>
+    private void EnhanceScoreTextVisibility()
+    {
+        if (scoreText == null) return;
+
+        // Set text color to bright white for maximum visibility
+        scoreText.color = Color.white;
+
+        // Make text bold for better visibility
+        scoreText.fontStyle = FontStyles.Bold;
+
+        // Increase font size slightly if it's too small (optional - adjust as needed)
+        if (scoreText.fontSize < 40)
+        {
+            scoreText.fontSize = 40;
+        }
+
+        // Force update to apply changes
+        scoreText.SetAllDirty();
+        
+        // Note: For best results, in Unity Inspector:
+        // 1. Select the Score Text GameObject
+        // 2. In TextMeshPro component, go to "Extra Settings"
+        // 3. Enable "Outline" and set:
+        //    - Outline Width: 0.3
+        //    - Outline Color: Black (0, 0, 0, 255)
+        // 4. Or enable "Shadow" and set:
+        //    - Shadow Offset: (2, -2)
+        //    - Shadow Color: Black with some transparency
     }
 
     private static void SaveHighScores(int newScore)
