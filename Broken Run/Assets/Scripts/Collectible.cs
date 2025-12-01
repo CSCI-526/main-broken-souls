@@ -5,6 +5,8 @@ public class Collectible : MonoBehaviour
     [Header("Collectible Settings")]
     public int scoreValue = 50; // no longer used for adding score
     public GameObject collectEffect;   // optional VFX prefab
+    public AudioClip coinSound;        // 🔊 assign sound in Inspector
+    public float soundVolume = 1f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -15,7 +17,9 @@ public class Collectible : MonoBehaviour
             Instantiate(collectEffect, transform.position, Quaternion.identity);
 
 
-
+        if (coinSound != null)
+            AudioSource.PlayClipAtPoint(coinSound, transform.position, soundVolume);
+            
         // ✅ Show floating "+1" popup at the coin position
         FloatingTextSpawner.I?.Show("+1", transform.position);
 
