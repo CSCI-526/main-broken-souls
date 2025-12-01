@@ -6,6 +6,11 @@ public class ObstacleCollision : MonoBehaviour
     public float bounceForceX = 12f;
     public float bounceForceY = 8f;
 
+    public GameObject bloodEffect;
+    public AudioSource audioSource;
+
+    public AudioClip hitSound;
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("[Spike] touched {collision.collider.name}, tag={collision.collider.tag}");
@@ -40,6 +45,14 @@ public class ObstacleCollision : MonoBehaviour
                     }
                     else
                     {
+                        GameObject blood = Instantiate(bloodEffect, collision.transform.position, Quaternion.identity);
+                        Destroy(blood, 2f);
+
+                        if (audioSource != null && hitSound != null)
+                        {   
+                            Debug.Log("Playing spike sound");
+                            audioSource.PlayOneShot(hitSound);
+                        }
                         CauseOfDeathTracker.RecordCause("Spike");
                         player.TakeDamage(25f);
                     }
