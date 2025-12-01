@@ -16,6 +16,9 @@ public class GameOverUI : MonoBehaviour
     [Header("Music")]
     public MusicManager musicManager; // assign in Inspector
 
+    [Header("Game Over Sound")]
+    public AudioSource sfxSource;          // a separate AudioSource for SFX
+    public AudioClip gameOverClip;  
     void Start()
     {
         gameOverPanel.SetActive(false);
@@ -25,6 +28,9 @@ public class GameOverUI : MonoBehaviour
     {
         // 2) stop music
         if (musicManager != null) musicManager.StopMusic();
+
+        if (sfxSource != null && gameOverClip != null)
+            sfxSource.PlayOneShot(gameOverClip);
 
         if (modeUI != null) modeUI.HideAllWithFade(0.25f);
 
