@@ -85,6 +85,11 @@ public class PlayerController : MonoBehaviour
     [Header("Sprite Transform")]
     public Transform spriteTransform; 
 
+    [Header("Trail")]   
+    [SerializeField] private TrailRenderer trail;
+    [SerializeField, Range(0f, 1f)] private float trailStartAlpha = 1f;
+    [SerializeField, Range(0f, 1f)] private float trailEndAlpha = 0f;
+
     private Coroutine shieldRoutine;
 
     private bool controlsFlipped = false;
@@ -405,25 +410,25 @@ public class PlayerController : MonoBehaviour
     }
 
     public void SmoothAdjustMoveSpeed(float targetSpeed, float duration)
-{
-    StopCoroutine(nameof(SmoothMoveSpeedCoroutine));
-    StartCoroutine(SmoothMoveSpeedCoroutine(targetSpeed, duration));
-}
-
-private IEnumerator SmoothMoveSpeedCoroutine(float targetSpeed, float duration)
-{
-    float startSpeed = moveSpeed;
-    float elapsed = 0f;
-
-    while (elapsed < duration)
     {
-        elapsed += Time.deltaTime;
-        moveSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
-        yield return null;
+        StopCoroutine(nameof(SmoothMoveSpeedCoroutine));
+        StartCoroutine(SmoothMoveSpeedCoroutine(targetSpeed, duration));
     }
 
-    moveSpeed = targetSpeed;
-}
+    private IEnumerator SmoothMoveSpeedCoroutine(float targetSpeed, float duration)
+    {
+        float startSpeed = moveSpeed;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            moveSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
+            yield return null;
+        }
+
+        moveSpeed = targetSpeed;
+    }
 
 
     public void AdjustToWorldSpeed(float worldSpeed)
@@ -436,14 +441,36 @@ private IEnumerator SmoothMoveSpeedCoroutine(float targetSpeed, float duration)
     {
         if (sr != null)
         {
+            Color c;
             if (gravityFlipped)             // gravity flip has priority
-                sr.color = gravityFlippedColor;
+                c = gravityFlippedColor;
             else if (controlsFlipped)       // control flip
-                sr.color = flippedColor;
+                c = flippedColor;
             else
-                sr.color = normalColor;     // no flip
+                c = normalColor;     // no flip
+            
+            sr.color = c;
+            SetTrailColor(c);
         }
     }
+
+    private void SetTrailColor(Color c)
+    {
+        if (trail == null) return;
+        var grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] {
+                new GradientColorKey(c, 0f),
+                new GradientColorKey(c, 1f)
+            },
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(trailStartAlpha, 0f),
+                new GradientAlphaKey(trailEndAlpha,   1f)
+            }
+        );
+        trail.colorGradient = grad;
+    }
+
 
     public void ActivateShield()
     {

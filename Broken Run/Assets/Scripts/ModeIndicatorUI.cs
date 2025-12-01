@@ -47,7 +47,7 @@ public class ModeIndicatorUI : MonoBehaviour
         if (textElement == null) return;
         
         // Set text color to bright white
-        textElement.color = Color.white;
+        textElement.color = Color.black;
         
         // Make text bold
         textElement.fontStyle = FontStyles.Bold;
