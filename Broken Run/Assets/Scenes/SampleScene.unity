@@ -4457,7 +4457,7 @@ MonoBehaviour:
   tileWidth: 10
   yPos: -4.5
   scrollSpeed: 5
-  speedIncreaseRate: 0.05
+  speedIncreaseRate: 0.03
   maxScrollSpeed: 20
   player: {fileID: 1256906662}
   killerPrefab: {fileID: 1574919655}
@@ -10096,7 +10096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1047465827866817289, guid: 630229e93d4830346b1e19bb113208ee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 1047465827866817289, guid: 630229e93d4830346b1e19bb113208ee, type: 3}
       propertyPath: m_LocalPosition.z
