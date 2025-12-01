@@ -4353,7 +4353,7 @@ Transform:
   m_GameObject: {fileID: 472038093}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 102.5, y: -0.029819965, z: 0}
+  m_LocalPosition: {x: 99.1, y: -0.029819965, z: 0}
   m_LocalScale: {x: 2, y: 9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4994,7 +4994,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.029849172, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -8614,7 +8614,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &981368430
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8663,8 +8663,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 0.25882354, g: 0.25882354, b: 0.25882354, a: 0}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -14371,7 +14371,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 61b75efbc052e2e41b9e6e3d905d988e, type: 3}
   m_Color: {r: 0.57861626, g: 0.57861626, b: 0.57861626, a: 1}
   m_FlipX: 0
@@ -15187,7 +15187,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 746f1e041c5bf154382bd168a142ae2f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15373,9 +15373,9 @@ MonoBehaviour:
   slowMoScale: 0.5
   slowMoDuration: 10
   spriteTransform: {fileID: 754528326}
-  trail: {fileID: 0}
+  trail: {fileID: 1800791806}
   trailStartAlpha: 1
-  trailEndAlpha: 0
+  trailEndAlpha: 1
 --- !u!50 &1800791809
 Rigidbody2D:
   serializedVersion: 5
@@ -17075,7 +17075,7 @@ Transform:
   m_GameObject: {fileID: 2030345120}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 66.14, y: -0.029819965, z: 0}
+  m_LocalPosition: {x: 62.8, y: -0.029819965, z: 0}
   m_LocalScale: {x: 2, y: 9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

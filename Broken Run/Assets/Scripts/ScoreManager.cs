@@ -135,10 +135,10 @@ public class ScoreManager : MonoBehaviour
         if (scoreText == null) return;
 
         // Set text color to bright white for maximum visibility
-        scoreText.color = Color.white;
+        //scoreText.color = Color.white;
 
         // Make text bold for better visibility
-        scoreText.fontStyle = FontStyles.Bold;
+        //scoreText.fontStyle = FontStyles.Bold;
 
         // Increase font size slightly if it's too small (optional - adjust as needed)
         if (scoreText.fontSize < 40)
@@ -147,7 +147,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         // Force update to apply changes
-        scoreText.SetAllDirty();
+        // scoreText.SetAllDirty();
         
         // Note: For best results, in Unity Inspector:
         // 1. Select the Score Text GameObject
