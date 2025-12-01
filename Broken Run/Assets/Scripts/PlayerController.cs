@@ -108,6 +108,9 @@ public class PlayerController : MonoBehaviour
         if (playerCollider == null)
             playerCollider = GetComponent<BoxCollider2D>();
 
+        standSize   = playerCollider.size;
+        standOffset = playerCollider.offset;
+
         // NEW: FIND Animator
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
