@@ -393,4 +393,10 @@ public void DeactivateShield()
     {
         return gravityFlipped;
     }
+    
+    // Public method for other scripts to check controls state
+    public bool IsControlsFlipped()
+    {
+        return controlsFlipped;
+    }
 }
