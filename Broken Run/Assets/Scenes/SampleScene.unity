@@ -3836,7 +3836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.35}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &835506195
@@ -6607,8 +6607,8 @@ MonoBehaviour:
   label: {fileID: 815746313}
   countdownText: {fileID: 1539473438}
   radial: {fileID: 0}
-  reversedIcon: {fileID: 0}
-  antiGravityIcon: {fileID: 0}
+  reversedIcon: {fileID: 21300000, guid: 5aea47b6515d9dc4d86101672ed8345c, type: 3}
+  antiGravityIcon: {fileID: 21300000, guid: 9785b124304410f41b04940e611e320e, type: 3}
 --- !u!114 &1393181300
 MonoBehaviour:
   m_ObjectHideFlags: 0
