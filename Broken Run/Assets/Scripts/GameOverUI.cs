@@ -103,6 +103,28 @@ public class GameOverUI : MonoBehaviour
         // Get cause of death
         string causeOfDeath = CauseOfDeathTracker.LastCauseOfDeath;
 
+        // Get gravity and controls flip states
+        bool gravityFlipped = false;
+        bool controlsReversed = false;
+        
+        // Try to find PlayerController to check flip states
+        PlayerController playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
+        {
+            gravityFlipped = playerController.IsGravityFlipped();
+            controlsReversed = playerController.IsControlsFlipped();
+        }
+        else
+        {
+            // Fallback: try NewPlayerController
+            NewPlayerController newPlayerController = FindObjectOfType<NewPlayerController>();
+            if (newPlayerController != null)
+            {
+                gravityFlipped = newPlayerController.IsGravityFlipped();
+                controlsReversed = newPlayerController.IsControlsFlipped();
+            }
+        }
+
         // Send to old analytics systems (for backwards compatibility)
         GoogleFormAnalytics formAnalytics = FindObjectOfType<GoogleFormAnalytics>();
         if (formAnalytics != null)
@@ -117,12 +139,14 @@ public class GameOverUI : MonoBehaviour
         // Send to Enhanced Analytics
         if (EnhancedAnalytics.Instance != null)
         {
-            Debug.Log($"📊 Sending Enhanced Analytics: Score={finalScore}, Time={survivalTime:F2}s, Speed={gameSpeed:F2}, Cause={causeOfDeath}");
+            Debug.Log($"📊 Sending Enhanced Analytics: Score={finalScore}, Time={survivalTime:F2}s, Speed={gameSpeed:F2}, Cause={causeOfDeath}, GravityFlipped={gravityFlipped}, ControlsReversed={controlsReversed}");
             EnhancedAnalytics.Instance.OnPlayerDeath(
                 causeOfDeath,
                 survivalTime,
                 finalScore,
-                gameSpeed
+                gameSpeed,
+                gravityFlipped,
+                controlsReversed
             );
         }
         else

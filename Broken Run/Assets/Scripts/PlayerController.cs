@@ -580,6 +580,12 @@ public class PlayerController : MonoBehaviour
     {
         return gravityFlipped;
     }
+    
+    // Public method for other scripts to check controls state
+    public bool IsControlsFlipped()
+    {
+        return controlsFlipped;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

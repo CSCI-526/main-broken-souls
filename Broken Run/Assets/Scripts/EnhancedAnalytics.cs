@@ -42,6 +42,10 @@ public class EnhancedSessionData
     public float gameSpeed;
     public int powerUpsCollected;
     public int coinsCollected;
+    
+    // Death state tracking
+    public bool diedWithGravityFlipped;    // Was gravity flipped when player died?
+    public bool diedWithControlsReversed; // Were controls reversed when player died?
 }
 
 public class EnhancedAnalytics : MonoBehaviour
@@ -81,6 +85,10 @@ public class EnhancedAnalytics : MonoBehaviour
     [SerializeField] private string gameSpeedEntry = "entry.141414141";
     [SerializeField] private string powerUpsCollectedEntry = "entry.151515151";
     [SerializeField] private string coinsCollectedEntry = "entry.161616161";
+    
+    [Header("Form Field Entry IDs - Death State")]
+    [SerializeField] private string diedWithGravityFlippedEntry = "entry.171717171";
+    [SerializeField] private string diedWithControlsReversedEntry = "entry.181818181";
     
     [Header("Settings")]
     [SerializeField] private bool enableTracking = true;
@@ -171,7 +179,7 @@ public class EnhancedAnalytics : MonoBehaviour
     /// <summary>
     /// Call this when player dies
     /// </summary>
-    public void OnPlayerDeath(string causeOfDeath, float survivalTime, int finalScore, float gameSpeed)
+    public void OnPlayerDeath(string causeOfDeath, float survivalTime, int finalScore, float gameSpeed, bool gravityFlipped = false, bool controlsReversed = false)
     {
         if (!enableTracking) return;
         
@@ -223,6 +231,10 @@ public class EnhancedAnalytics : MonoBehaviour
         // Store other data
         currentSession.finalScore = finalScore;
         currentSession.gameSpeed = gameSpeed;
+        
+        // Track death state (gravity/controls flip)
+        currentSession.diedWithGravityFlipped = gravityFlipped;
+        currentSession.diedWithControlsReversed = controlsReversed;
         
         // Update best survival
         if (survivalTime > bestSurvivalInCurrentSession)
@@ -385,6 +397,10 @@ public class EnhancedAnalytics : MonoBehaviour
         form.AddField(powerUpsCollectedEntry, session.powerUpsCollected.ToString());
         form.AddField(coinsCollectedEntry, session.coinsCollected.ToString());
         
+        // Death state data
+        form.AddField(diedWithGravityFlippedEntry, session.diedWithGravityFlipped ? "1" : "0");
+        form.AddField(diedWithControlsReversedEntry, session.diedWithControlsReversed ? "1" : "0");
+        
         // Submit to Google Form
         using (UnityWebRequest www = UnityWebRequest.Post(baseUrl, form))
         {
@@ -449,6 +465,8 @@ public class EnhancedAnalytics : MonoBehaviour
         
         Debug.Log($"Final Score: {currentSession.finalScore}");
         Debug.Log($"Game Speed: {currentSession.gameSpeed:F2}");
+        Debug.Log($"Died with Gravity Flipped: {currentSession.diedWithGravityFlipped}");
+        Debug.Log($"Died with Controls Reversed: {currentSession.diedWithControlsReversed}");
         Debug.Log("==============================");
     }
     
