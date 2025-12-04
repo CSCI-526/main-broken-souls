@@ -11629,6 +11629,8 @@ MonoBehaviour:
   leaderboardText: {fileID: 0}
   modeUI: {fileID: 0}
   musicManager: {fileID: 0}
+  sfxSource: {fileID: 0}
+  gameOverClip: {fileID: 0}
 --- !u!4 &1462564296
 Transform:
   m_ObjectHideFlags: 0
@@ -13322,8 +13324,8 @@ MonoBehaviour:
   label: {fileID: 64034213}
   countdownText: {fileID: 78900970}
   radial: {fileID: 0}
-  reversedIcon: {fileID: 0}
-  antiGravityIcon: {fileID: 0}
+  reversedIcon: {fileID: -810828629930792435, guid: 842591ba7587d6d47b11a296ce2f4af1, type: 3}
+  antiGravityIcon: {fileID: -3966883432226557950, guid: 3e15dbe9ca2dbde46ae2a56d30d8a87c, type: 3}
 --- !u!114 &1677492014
 MonoBehaviour:
   m_ObjectHideFlags: 0
