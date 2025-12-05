@@ -8,14 +8,18 @@ public class GravityFollower : MonoBehaviour
     [Tooltip("Vertical offset from tile center when attached.")]
     public float attachOffset = 3f;
 
+    [Tooltip("How fast power-up moves when gravity flips.")]
+    public float gravityMoveSpeed = 12f;
+
     private bool lastGravityFlipped = false;
+    private bool isMoving = false;
+    private Vector3 targetPos;
 
     void Start()
     {
         player = FindObjectOfType<PlayerController>();
         groundManager = FindObjectOfType<EndlessGround>();
-        
-        // Cache initial gravity
+
         if (player != null)
             lastGravityFlipped = player.IsGravityFlipped();
     }
@@ -26,22 +30,35 @@ public class GravityFollower : MonoBehaviour
 
         bool current = player.IsGravityFlipped();
 
-        // If gravity flipped, update power-up orientation + position
+        // gravity changed -> start smooth movement
         if (current != lastGravityFlipped)
         {
-            ApplyGravityFlip(current);
+            BeginSmoothFlip(current);
             lastGravityFlipped = current;
+        }
+
+        // If currently moving, smoothly approach the target
+        if (isMoving)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                targetPos,
+                gravityMoveSpeed * Time.deltaTime
+            );
+
+            if (Vector3.Distance(transform.position, targetPos) < 0.05f)
+                isMoving = false; // finished moving
         }
     }
 
-    private void ApplyGravityFlip(bool flipped)
+    private void BeginSmoothFlip(bool flipped)
     {
-        // Flip the sprite
+        // Flip sprite instantly (visual only)
         Vector3 s = transform.localScale;
         s.y = flipped ? -Mathf.Abs(s.y) : Mathf.Abs(s.y);
         transform.localScale = s;
 
-        // Snap to nearest tile
+        // Compute new target Y position
         Transform[] tiles = flipped ? groundManager.ceilingTiles : groundManager.groundTiles;
         Transform closest = null;
         float bestDist = Mathf.Infinity;
@@ -60,11 +77,11 @@ public class GravityFollower : MonoBehaviour
 
         if (closest != null)
         {
-            transform.position = new Vector3(
-                transform.position.x,
-                closest.position.y + (flipped ? -Mathf.Abs(attachOffset) : Mathf.Abs(attachOffset)),
-                transform.position.z
-            );
+            float newY = closest.position.y + (flipped ? -Mathf.Abs(attachOffset) : Mathf.Abs(attachOffset));
+
+            // Set movement target
+            targetPos = new Vector3(transform.position.x, newY, transform.position.z);
+            isMoving = true;
         }
     }
 }

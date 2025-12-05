@@ -45,6 +45,9 @@ public class PowerUpSpawner : MonoBehaviour
     private bool gunRecentlySpawned = false;
     private float gunSpawnCooldown = 0.1f; 
 
+    [Header("Safety")]
+    public float obstacleClearance = 0.5f;
+
     private void Start()
     {
         if (scoreReader == null)
@@ -172,6 +175,26 @@ public class PowerUpSpawner : MonoBehaviour
             chosen.position.y + signedYOffset + Random.Range(-randomYJitter, randomYJitter),
             0f
         );
+
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+
+foreach (var o in obstacles)
+{
+    if (o == null) continue;
+
+    Vector3 op = o.transform.position;
+
+    // Check if spawn is too close horizontally & vertically (overlapping zone)
+    if (Mathf.Abs(op.x - spawnPos.x) < obstacleClearance &&
+        Mathf.Abs(op.y - spawnPos.y) < obstacleClearance)
+    {
+        // Decide direction: choose the side farther from obstacle
+        if (spawnPos.x > op.x)
+            spawnPos.x = op.x + obstacleClearance;   // move right
+        else
+            spawnPos.x = op.x - obstacleClearance;   // move left
+    }
+}
         return true;
     }
 
