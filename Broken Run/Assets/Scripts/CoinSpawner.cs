@@ -18,14 +18,11 @@ public class CoinSpawner : MonoBehaviour
     public float yOffset = 1.8f;
     public float randomYJitter = 0.1f;
 
-    [Header("Collision Checks")]
+    [Header("Collision / Adjust Settings (for CoinAutoAdjuster)")]
     [Tooltip("Layer that contains spikes / blocks / coffins / barrels / statues / etc.")]
     public LayerMask obstacleLayer;
 
-    [Tooltip("Area we test to make sure a coin does NOT overlap an obstacle.")]
-    public Vector2 coinCheckSize = new Vector2(0.6f, 0.6f);
-
-    [Tooltip("How many times we move up/down trying to find a free spot.")]
+    [Tooltip("How many times the coin moves to find a free spot.")]
     public int maxAttempts = 10;
 
     [Tooltip("How much to move each attempt (world units).")]
@@ -89,31 +86,23 @@ public class CoinSpawner : MonoBehaviour
         float signedYOffset = flipped ? -Mathf.Abs(yOffset) : Mathf.Abs(yOffset);
         Vector3 pos = new Vector3(spawnX, chosen.position.y + signedYOffset, 0f);
 
-        // 6. Try several vertical positions until we find one
-        //    that does NOT overlap any obstacle collider.
-        int i;
-        for (i = 0; i < maxAttempts; i++)
-        {
-            bool blocked = Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer) != null;
-
-            if (!blocked)
-                break;  // free spot – we keep this pos
-
-            // Move away from the obstacle: up if normal gravity, down if flipped
-            pos.y += flipped ? -adjustStep : adjustStep;
-        }
-
-        // If after all attempts it is still blocked, skip this spawn
-        if (Physics2D.OverlapBox(pos, coinCheckSize, 0f, obstacleLayer) != null)
-            return;
-
-        // 7. Small random jitter so coins aren't in a perfect line
+        // 6. Small random jitter so coins aren't in a perfect line
         pos.y += Random.Range(-randomYJitter, randomYJitter);
 
-        // 8. Spawn the coin
+        // 7. Spawn the coin
         GameObject coin = Instantiate(coinPrefab, pos, Quaternion.identity);
 
-        // 9. Ensure it scrolls with the world
+        // 7.1 send data to CoinAutoAdjuster
+        var adjuster = coin.GetComponent<CoinAutoAdjuster>();
+        if (adjuster != null)
+        {
+            adjuster.obstacleLayer  = obstacleLayer;
+            adjuster.maxAttempts    = maxAttempts;
+            adjuster.adjustStep     = adjustStep;
+            adjuster.gravityFlipped = flipped;
+        }
+
+        // 8. Ensure it scrolls with the world
         var rb = coin.GetComponent<Rigidbody2D>();
         if (rb == null) rb = coin.AddComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
@@ -124,7 +113,7 @@ public class CoinSpawner : MonoBehaviour
         mover.despawnX = player.position.x - 20f;
     }
 
-    // Optional debug gizmo to see the test box
+    // Optional debug gizmo to roughly visualize spawn area
     void OnDrawGizmosSelected()
     {
         if (player == null) return;
@@ -134,6 +123,6 @@ public class CoinSpawner : MonoBehaviour
         float spawnX = player.position.x + spawnDistance;
         float baseY = player.position.y + yOffset;
 
-        Gizmos.DrawWireCube(new Vector3(spawnX, baseY, 0f), coinCheckSize);
+        Gizmos.DrawWireCube(new Vector3(spawnX, baseY, 0f), new Vector2(0.6f, 0.6f));
     }
 }

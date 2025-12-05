@@ -688,15 +688,15 @@ MonoBehaviour:
   coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
   player: {fileID: 1256906662}
   groundManager: {fileID: 967972291}
-  spawnInterval: 5
+  spawnInterval: 2
   spawnDistance: 22
-  yOffset: 1.8
+  yOffset: 1.6
   randomYJitter: 0.25
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 2048
-  coinCheckSize: {x: 0.5, y: 0.5}
-  horizontalCheckRange: 2
+    m_Bits: 2056
+  maxAttempts: 10
+  adjustStep: 1
 --- !u!1 &177417954
 GameObject:
   m_ObjectHideFlags: 0
