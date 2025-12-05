@@ -873,6 +873,7 @@ MonoBehaviour:
   extraForward: 5
   yOffset: 1.5
   randomYJitter: 0.3
+  obstacleClearance: 1.5
 --- !u!4 &249586639
 Transform:
   m_ObjectHideFlags: 0
@@ -6018,6 +6019,10 @@ MonoBehaviour:
   trail: {fileID: 1256906666}
   trailStartAlpha: 1
   trailEndAlpha: 1
+  audioSource: {fileID: 1256906671}
+  controlsFlipSFX: {fileID: 8300000, guid: 8aeb1181ae517284e8b819cd309d5a1e, type: 3}
+  gravityFlipSFX: {fileID: 8300000, guid: 8aeb1181ae517284e8b819cd309d5a1e, type: 3}
+  normalStateSFX: {fileID: 8300000, guid: 8aeb1181ae517284e8b819cd309d5a1e, type: 3}
 --- !u!61 &1256906665
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6234,7 +6239,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 0
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500

@@ -46,7 +46,7 @@ public class PowerUpSpawner : MonoBehaviour
     private float gunSpawnCooldown = 0.1f; 
 
     [Header("Safety")]
-    public float obstacleClearance = 0.5f;
+    public float obstacleClearance = 1.5f;
 
     private void Start()
     {

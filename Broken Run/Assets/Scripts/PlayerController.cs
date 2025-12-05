@@ -98,6 +98,12 @@ public class PlayerController : MonoBehaviour
     private float groundY = -3.487f;
     private float originalGravityScale = 3f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip controlsFlipSFX;
+    public AudioClip gravityFlipSFX;
+    public AudioClip normalStateSFX;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -330,15 +336,31 @@ public class PlayerController : MonoBehaviour
 
     // Toggle helpers
     private void SetControlFlip(bool on)
-    {
+    {   
+        bool wasActive = controlsFlipped;
         controlsFlipped = on;
+        // SFX: flip ON
+    if (!wasActive && on && audioSource != null && controlsFlipSFX != null)
+        audioSource.PlayOneShot(controlsFlipSFX);
+
+    // SFX: return to normal (only if gravity is also normal)
+    if (wasActive && !on && !gravityFlipped && audioSource != null && normalStateSFX != null)
+        audioSource.PlayOneShot(normalStateSFX);
+
         SetPlayerColor(on || gravityFlipped); // keep red while any effect is active
     }
 
     private void SetGravityFlip(bool on)
     {
+        bool wasActive = gravityFlipped;
         gravityFlipped = on;
         rb.gravityScale = originalGravityScale * (on ? -1f : 1f);
+            if (!wasActive && on && audioSource != null && gravityFlipSFX != null)
+        audioSource.PlayOneShot(gravityFlipSFX);
+
+    // SFX: return to normal (only if controls also normal)
+    if (wasActive && !on && !controlsFlipped && audioSource != null && normalStateSFX != null)
+        audioSource.PlayOneShot(normalStateSFX);
         SetPlayerColor(on || controlsFlipped); // keep red while any effect is active
         if (spriteTransform != null)
         {
