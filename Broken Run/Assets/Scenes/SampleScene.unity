@@ -688,7 +688,7 @@ MonoBehaviour:
   coinPrefab: {fileID: 3678452837041661345, guid: 270950957637a3d45a4abd2f44a0fabf, type: 3}
   player: {fileID: 1256906662}
   groundManager: {fileID: 967972291}
-  spawnInterval: 2
+  spawnInterval: 5
   spawnDistance: 22
   yOffset: 1.6
   randomYJitter: 0.25

@@ -11,7 +11,7 @@ public class CoinSpawner : MonoBehaviour
     public EndlessGround groundManager;
 
     [Header("Spawn Timing")]
-    public float spawnInterval = 2.0f;
+    public float spawnInterval = 5.0f;
     public float spawnDistance = 22f;
 
     [Header("Placement")]
