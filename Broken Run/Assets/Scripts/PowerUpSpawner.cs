@@ -185,5 +185,9 @@ public class PowerUpSpawner : MonoBehaviour
             mover = go.AddComponent<ObstacleMover>();
         mover.speed = groundManager.scrollSpeed;
         mover.despawnX = player.position.x - 20f;
+
+           if (!go.TryGetComponent<GravityFollower>(out var gf))
+        gf = go.AddComponent<GravityFollower>();
+    gf.attachOffset = yOffset;
     }
 }
