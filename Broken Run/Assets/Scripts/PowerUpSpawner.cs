@@ -42,6 +42,9 @@ public class PowerUpSpawner : MonoBehaviour
     [Tooltip("Small random vertical jitter so spawns aren't identical.")]
     public float randomYJitter = 0.3f;
 
+    private bool gunRecentlySpawned = false;
+    private float gunSpawnCooldown = 0.1f; 
+
     private void Start()
     {
         if (scoreReader == null)
@@ -84,6 +87,9 @@ public class PowerUpSpawner : MonoBehaviour
                 // Ensure it moves along with scrolling world
                 EnsureMover(pickup);
                 Debug.Log($"🔫 Gun spawned at milestone {atScore} -> {pos}");
+
+                gunRecentlySpawned = true;
+                StartCoroutine(ResetGunSpawnFlag());
             }
             else
             {
@@ -105,7 +111,7 @@ public class PowerUpSpawner : MonoBehaviour
 
     private void TrySpawnSlowMo()
     {
-        if (slowMoPrefab == null || player == null || groundManager == null)
+        if (slowMoPrefab == null || player == null || groundManager == null || gunRecentlySpawned)
             return;
 
         if (TryFindSpawnPosition(out Vector3 pos, out bool gravityFlipped))
@@ -122,6 +128,12 @@ public class PowerUpSpawner : MonoBehaviour
             Debug.Log($"🌀 Slow-Mo spawned at {pos}");
         }
     }
+
+    private IEnumerator ResetGunSpawnFlag()
+{
+    yield return new WaitForSeconds(gunSpawnCooldown);
+    gunRecentlySpawned = false;
+}
 
     // ----------------- Shared helpers -----------------
     private bool TryFindSpawnPosition(out Vector3 spawnPos, out bool gravityFlipped)
